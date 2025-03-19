@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import SellerOverview from "@/components/SellerOverview";
 
 export default function Seller() {
   // State for Active Tab
@@ -57,7 +58,9 @@ export default function Seller() {
 
 // Dummy Components (Replace with actual components)
 function Overview() {
-  return <div className="text-lg font-semibold">📊 Overview Content Here</div>;
+  return <div className="text-lg font-semibold">
+    <SellerOverview/>
+  </div>;
 }
 
 function AllSellers() {
