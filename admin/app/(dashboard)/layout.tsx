@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/*Left */}
             <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%]">
-              <Link href="/" className="flex items-center justify-start lg:justify-start gap-2 p-4">
+              <Link href="/admin" className="flex items-center justify-start lg:justify-start gap-2 p-4">
               {/* WHAT TO CHANGE THE LOGO CHANGE IT HERE */}
               <Image src="/logo.png" alt="logo" width={32} height={32} className="lg:hidden" />   
               <div className="hidden lg:block font-bold text-2xl px-2">
