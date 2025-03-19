@@ -8,7 +8,7 @@ interface QuickProductPendingApprovalProps {
 const QuickProductPendingApproval: React.FC<QuickProductPendingApprovalProps> = ({ name, isOdd }) => {
   return (
     <div
-      className={`w-80 px-3 py-2 mb-6 bg-white rounded-lg border border-gray-200 
+      className={`w-full px-3 py-2 mb-6 bg-white rounded-lg border border-gray-200 
         ${isOdd ? "hover:shadow-[0px_12px_2px_0px_rgba(188,255,222,0.7)]" : "hover:shadow-[0px_12px_2px_0px_rgba(255,243,214,0.7)]"} 
         ${isOdd ? "shadow-[0px_10px_2px_0px_rgba(188,255,222,1)]" : "shadow-[0px_10px_2px_0px_rgba(255,243,214,1)]"} 
         inline-flex justify-between items-center overflow-hidden transition-all duration-200`}

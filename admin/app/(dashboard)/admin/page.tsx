@@ -4,11 +4,13 @@ import StatCard from "@/components/StatCard"; // ✅ Fixed import path
 import TrendsChart from "@/components/TrendsChart";
 import QuickShopPendingApproval from "@/components/QuickShopPendingApproval"; // ✅ Corrected component import
 import QuickProductPendingApproval from "@/components/QuickProductPendingApproval";
+import IncomeExpenseChart from "@/components/IncomeExpenseChart";
 
 const shopNames = [
   "Super Mart",
   "Fresh Groceries",
   "Daily Essentials",
+  "Organic goods",
 ];
 const productNames = [
   "Noodles",
@@ -33,11 +35,11 @@ const AdminPage = () => {
         {/* MIDDLE CHART */}
         <div className="flex flex-col lg:flex-row gap-6 my-4">
           {/* COUNT CHART */}
-          <div className="flex w-1/2 h-[450px]">
+          <div className="flex w-full lg:1/3 h-[450px]">
             <BestSellingProductChart />
           </div>
           {/* ATTENDANCE CHART */}
-          <div className="flex w-1/2 h-[450px]">
+          <div className="flex w-full lg:1/3 h-[450px]">
             <RevenueChart />
           </div>
         </div>
@@ -49,25 +51,27 @@ const AdminPage = () => {
           </div>
         </div>
       </div>
-
+ 
       {/* RIGHT PANEL (Quick Accept/Rejection Section) */}
       
-      <div className="w-full lg:w-1/3 flex flex-col gap-2 overflow-hidden ">
-        <div>
-            <div className='bg-white p-4 rounded-xl border border-gray-200 shadow-md hover:shadow-lg'>
+      <div className="w-full lg:w-1/3 flex flex-col gap-6 overflow-hidden ">
+        <div className="w-full lg:1/3 h-[450px]">
+        <IncomeExpenseChart/>
+              </div>
+            <div className='bg-white p-4 rounded-xl border border-gray-200 shadow-md hover:shadow-lg '>
             <div className="flex items-center justify-between">
-                <h1 className="text-xl font-semibold">Pending Approvals</h1>
+                <h1 className="text-lg font-semibold">Pending Approvals</h1>
                 <span className="text-sm text-gray-400">View All</span>
             </div>
 
             {/* PENDING SHOPS */}
             <div className="p-4 text-base text-gray-500">Pending shops</div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full lg:1/3">
               {shopNames.map((name, index) => (
               <QuickShopPendingApproval key={index} name={name} isOdd={index % 2 !== 0} />
                 ))}
             </div>
-            <div className="border border-gray-200 mx-4 mb-[-8]"></div>
+            <div className="border border-gray-200 mx-4 mb-3"></div>
             {/* PENDING PRODUCTS */}
             <div className="p-4 text-base text-gray-500">Pending products</div>
             <div className="flex flex-col items-center">
@@ -80,7 +84,6 @@ const AdminPage = () => {
         
         </div>
       </div>
-  </div>
   );
 };
 
