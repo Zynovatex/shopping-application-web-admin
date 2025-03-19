@@ -21,7 +21,9 @@ const productNames = [
 
 const AdminPage = () => {
   return (
+    <div><span className="text-2xl font-bold m-5">Dashboard</span>
     <div className="p-4 flex gap-4 flex-col md:flex-row">
+      
       {/* LEFT SECTION */}
       <div className="w-full lg:w-2/3 flex flex-col gap-2">
         {/* USER CARDS */}
@@ -83,6 +85,7 @@ const AdminPage = () => {
         
         
         </div>
+      </div>
       </div>
   );
 };
