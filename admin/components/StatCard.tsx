@@ -18,7 +18,7 @@ const StatCard: React.FC<StatCardProps> = ({
   isPositive,
 }) => {
   return (
-    <div className="flex-1 flex-col p-5 min-w-[160px] rounded-xl border border-gray-200 shadow-md hover:shadow-lg bg-white">
+    <div className="flex md:flex-1 sm:flex-1 flex-col p-5 min-w-[160px] rounded-xl border border-gray-200 shadow-md hover:shadow-lg bg-white">
       <div className="flex items-center space-x-2">
         {/* Replace with actual PNG file */}
         <Image src={iconUrl} alt="icon" width={50} height={50} className="rounded-md pr-1" />
