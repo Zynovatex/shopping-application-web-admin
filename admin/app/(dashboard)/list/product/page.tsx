@@ -46,7 +46,7 @@ export default function Seller() {
     { id: "pending-approvals", label: "Pending Proudct Approvals" },
   ];
 
-  const renderRow = (item: AllShops) => (
+  const AllProductsRenderRow = (item: AllShops) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4 ">
         <div className="flex gap-2 items-center">
@@ -82,7 +82,7 @@ export default function Seller() {
   );
 
 
-  const renderRow2 = (item: AllShops) => (
+  const pendingProductRenderRow = (item: AllShops) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4 ">
         <div className="flex gap-2 items-center">
@@ -169,9 +169,9 @@ export default function Seller() {
         <div className="p-6 w-full">
           {activeTab === "overview" && <Overview />}
           {activeTab === "all-products" && (
-            <AllSellers columns={columns} renderRow={renderRow} />
+            <AllSellers columns={columns} AllProductsRenderRow={AllProductsRenderRow} />
           )}
-          {activeTab === "pending-approvals" && <PendingApprovals columns={columns} renderRow2={renderRow2} />}
+          {activeTab === "pending-approvals" && <PendingApprovals columns={columns} pendingProductRenderRow={pendingProductRenderRow} />}
         </div>
       </div>
     </div>
@@ -188,10 +188,10 @@ function Overview() {
 
 function AllSellers({
   columns,
-  renderRow,
+  AllProductsRenderRow,
 }: {
   columns: Column[];
-  renderRow: (item: AllShops) => React.ReactNode;
+  AllProductsRenderRow: (item: AllShops) => React.ReactNode;
 }) {
   return (
     <div className="bg-white p-4 flex-1 m-2  mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
@@ -215,7 +215,7 @@ function AllSellers({
       <Table<AllShops>
         columns={columns}
         data={allProductData}
-        renderRow={renderRow}
+        renderRow={AllProductsRenderRow}
       />
 
       {/* PAGINATION */}
@@ -225,26 +225,14 @@ function AllSellers({
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-{/*in this code after this line i want to use the renderRow2 because i want to render another row , fix the error  */}
+{/*in this code after this line i want to use the pendingProductRenderRow because i want to render another row , fix the error  */}
 
 function PendingApprovals({
   columns,
-  renderRow2,
+  pendingProductRenderRow,
 }: {
   columns: Column[];
-  renderRow2: (item: AllShops) => React.ReactNode;
+  pendingProductRenderRow: (item: AllShops) => React.ReactNode;
 }) {
   return (
     <div className="bg-white p-4 flex-1 m-2  mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
@@ -268,7 +256,7 @@ function PendingApprovals({
       <Table<AllShops>
         columns={columns}
         data={allProductData}
-        renderRow={renderRow2}
+        renderRow={pendingProductRenderRow}
       />
 
       {/* PAGINATION */}

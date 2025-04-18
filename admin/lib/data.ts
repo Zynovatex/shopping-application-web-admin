@@ -352,6 +352,482 @@ export const allProductData = [
   }
 ];
 
+export const allOrderData = [
+  {
+    id: 1,
+    info: "Order #1001",
+    orderId: "ORD-1A3D67",
+    quantity: 3,
+    totalAmount: "LKR 1450.00",
+    customerName: "Nimesh Perera",
+    deliveryPerson: "Kamal Silva",
+    invoice: "view"
+  },
+  {
+    id: 2,
+    info: "Order #1002",
+    orderId: "ORD-7B9F34",
+    quantity: 1,
+    totalAmount: "LKR 320.00",
+    customerName: "Shanaya Fernando",
+    deliveryPerson: "Nuwan Jayasooriya",
+    invoice: "view"
+  },
+  {
+    id: 3,
+    info: "Order #1003",
+    orderId: "ORD-4C2J83",
+    quantity: 5,
+    totalAmount: "LKR 2790.00",
+    customerName: "Dilan Abeysekera",
+    deliveryPerson: "Sandun Wijesinghe",
+    invoice: "view"
+  },
+  {
+    id: 4,
+    info: "Order #1004",
+    orderId: "ORD-2A7Z91",
+    quantity: 2,
+    totalAmount: "LKR 950.00",
+    customerName: "Ishara Madushani",
+    deliveryPerson: "Kavindu Lakmal",
+    invoice: "view"
+  },
+  {
+    id: 5,
+    info: "Order #1005",
+    orderId: "ORD-8X5P72",
+    quantity: 4,
+    totalAmount: "LKR 1980.00",
+    customerName: "Kasun Rathnayake",
+    deliveryPerson: "Roshan Silva",
+    invoice: "view"
+  },
+  {
+    id: 6,
+    info: "Order #1006",
+    orderId: "ORD-6T3K84",
+    quantity: 1,
+    totalAmount: "LKR 450.00",
+    customerName: "Malsha Samarasinghe",
+    deliveryPerson: "Duminda Perera",
+    invoice: "view"
+  },
+  {
+    id: 7,
+    info: "Order #1007",
+    orderId: "ORD-5D1N12",
+    quantity: 6,
+    totalAmount: "LKR 3140.00",
+    customerName: "Bhanuka Jayarathne",
+    deliveryPerson: "Suranga De Silva",
+    invoice: "view"
+  },
+  {
+    id: 8,
+    info: "Order #1008",
+    orderId: "ORD-9F6W11",
+    quantity: 2,
+    totalAmount: "LKR 980.00",
+    customerName: "Nadeesha Ranasinghe",
+    deliveryPerson: "Isuru Weerasinghe",
+    invoice: "view"
+  },
+  {
+    id: 9,
+    info: "Order #1009",
+    orderId: "ORD-1K8Y77",
+    quantity: 3,
+    totalAmount: "LKR 1350.00",
+    customerName: "Ravindu Tharanga",
+    deliveryPerson: "Suren Rajapaksha",
+    invoice: "view"
+  },
+  {
+    id: 10,
+    info: "Order #1010",
+    orderId: "ORD-7M4H33",
+    quantity: 5,
+    totalAmount: "LKR 2530.00",
+    customerName: "Hansani Lakmali",
+    deliveryPerson: "Manjula Priyantha",
+    invoice: "view"
+  },
+  {
+    id: 11,
+    info: "Order #1011",
+    orderId: "ORD-2X1C56",
+    quantity: 1,
+    totalAmount: "LKR 220.00",
+    customerName: "Dinithi Jayasinghe",
+    deliveryPerson: "Tharindu Kavinda",
+    invoice: "view"
+  },
+  {
+    id: 12,
+    info: "Order #1012",
+    orderId: "ORD-4B7N24",
+    quantity: 4,
+    totalAmount: "LKR 1600.00",
+    customerName: "Sachith Alwis",
+    deliveryPerson: "Nimashi Perera",
+    invoice: "view"
+  },
+  {
+    id: 13,
+    info: "Order #1013",
+    orderId: "ORD-6V8D88",
+    quantity: 3,
+    totalAmount: "LKR 1420.00",
+    customerName: "Nimali Thilakarathne",
+    deliveryPerson: "Yashodha Maduranga",
+    invoice: "view"
+  },
+  {
+    id: 14,
+    info: "Order #1014",
+    orderId: "ORD-3C2R17",
+    quantity: 6,
+    totalAmount: "LKR 3180.00",
+    customerName: "Tharushi Kavindya",
+    deliveryPerson: "Ravishan Dissanayake",
+    invoice: "view"
+  },
+  {
+    id: 15,
+    info: "Order #1015",
+    orderId: "ORD-9L7Z99",
+    quantity: 2,
+    totalAmount: "LKR 980.00",
+    customerName: "Imesh Fernando",
+    deliveryPerson: "Navindu Senanayake",
+    invoice: "view"
+  }
+];
+
+export const allDeliveryData = [
+  {
+    id: 1,
+    personId: "DP-001",
+    info: "Kamal Silva",
+    photo: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 120,
+    activeDelivery: 3,
+    totalEarnings: "LKR 48,000.00",
+    ratings: 4.8
+  },
+  {
+    id: 2,
+    personId: "DP-002",
+    info: "Tharindu Perera",
+    photo: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 98,
+    activeDelivery: 5,
+    totalEarnings: "LKR 39,200.00",
+    ratings: 4.6
+  },
+  {
+    id: 3,
+    personId: "DP-003",
+    info: "Ravindu Tharanga",
+    photo: "https://images.unsplash.com/photo-1590080876460-4a9d6ecf2b3d?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 87,
+    activeDelivery: 2,
+    totalEarnings: "LKR 34,800.00",
+    ratings: 4.2
+  },
+  {
+    id: 4,
+    personId: "DP-004",
+    info: "Sanjeewa Madushan",
+    photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 102,
+    activeDelivery: 4,
+    totalEarnings: "LKR 41,500.00",
+    ratings: 4.5
+  },
+  {
+    id: 5,
+    personId: "DP-005",
+    info: "Bhanuka Jayasundara",
+    photo: "https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 76,
+    activeDelivery: 1,
+    totalEarnings: "LKR 29,800.00",
+    ratings: 4.1
+  },
+  {
+    id: 6,
+    personId: "DP-006",
+    info: "Nipun Lakshan",
+    photo: "https://images.unsplash.com/photo-1624561172888-ac93c696e10e?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 144,
+    activeDelivery: 2,
+    totalEarnings: "LKR 58,700.00",
+    ratings: 4.9
+  },
+  {
+    id: 7,
+    personId: "DP-007",
+    info: "Kavindu Silva",
+    photo: "https://images.unsplash.com/photo-1573497019157-94c48a2e7b1b?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 59,
+    activeDelivery: 3,
+    totalEarnings: "LKR 23,900.00",
+    ratings: 3.8
+  },
+  {
+    id: 8,
+    personId: "DP-008",
+    info: "Dilan Fernando",
+    photo: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 81,
+    activeDelivery: 1,
+    totalEarnings: "LKR 31,500.00",
+    ratings: 4.0
+  },
+  {
+    id: 9,
+    personId: "DP-009",
+    info: "Sasindu Gunasekara",
+    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 134,
+    activeDelivery: 6,
+    totalEarnings: "LKR 56,000.00",
+    ratings: 4.7
+  },
+  {
+    id: 10,
+    personId: "DP-010",
+    info: "Isuru Jayasinghe",
+    photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 111,
+    activeDelivery: 2,
+    totalEarnings: "LKR 45,800.00",
+    ratings: 4.3
+  },
+  {
+    id: 11,
+    personId: "DP-011",
+    info: "Roshan Dissanayake",
+    photo: "https://images.unsplash.com/photo-1614289323376-2f6c8ab81967?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 66,
+    activeDelivery: 0,
+    totalEarnings: "LKR 26,000.00",
+    ratings: 4.0
+  },
+  {
+    id: 12,
+    personId: "DP-012",
+    info: "Charith Bandara",
+    photo: "https://images.unsplash.com/photo-1544725176-7c40e5a2c9f9?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 73,
+    activeDelivery: 2,
+    totalEarnings: "LKR 30,500.00",
+    ratings: 4.4
+  },
+  {
+    id: 13,
+    personId: "DP-013",
+    info: "Tharaka Prasad",
+    photo: "https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 88,
+    activeDelivery: 1,
+    totalEarnings: "LKR 36,200.00",
+    ratings: 4.2
+  },
+  {
+    id: 14,
+    personId: "DP-014",
+    info: "Nadeesha Weerasinghe",
+    photo: "https://images.unsplash.com/photo-1628294895986-b6dfbfa3cfc1?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 95,
+    activeDelivery: 3,
+    totalEarnings: "LKR 38,000.00",
+    ratings: 4.3
+  },
+  {
+    id: 15,
+    personId: "DP-015",
+    info: "Imesh Fernando",
+    photo: "https://images.unsplash.com/photo-1614284713550-7fbd3913883d?auto=compress&cs=tinysrgb&w=800",
+    totalDelivery: 120,
+    activeDelivery: 4,
+    totalEarnings: "LKR 49,900.00",
+    ratings: 4.6
+  }
+];
+
+export const allCustomerData = [
+  {
+    id: 1,
+    customerId: "CUST-1001",
+    name: "Nuwan Perera",
+    address: "23 Galle Road, Colombo 03",
+    district: "Colombo",
+    photo: "https://images.unsplash.com/photo-1607746882042-944635dfe10e",
+    totalOrder: 34,
+    cancelOrder: 2,
+    totalAmount: "LKR 42,300.00"
+  },
+  {
+    id: 2,
+    customerId: "CUST-1002",
+    name: "Thilini Jayasinghe",
+    address: "14 Flower Avenue, Nugegoda",
+    district: "Colombo",
+    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+    totalOrder: 21,
+    cancelOrder: 1,
+    totalAmount: "LKR 25,750.00"
+  },
+  {
+    id: 3,
+    customerId: "CUST-1003",
+    name: "Kavindu Fernando",
+    address: "7 River Side, Kandy",
+    district: "Kandy",
+    photo: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61",
+    totalOrder: 12,
+    cancelOrder: 0,
+    totalAmount: "LKR 14,200.00"
+  },
+  {
+    id: 4,
+    customerId: "CUST-1004",
+    name: "Sachini Madushani",
+    address: "108 Lake Road, Galle",
+    district: "Galle",
+    photo: "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c",
+    totalOrder: 18,
+    cancelOrder: 2,
+    totalAmount: "LKR 19,100.00"
+  },
+  {
+    id: 5,
+    customerId: "CUST-1005",
+    name: "Roshan Dissanayake",
+    address: "56 Temple Street, Kurunegala",
+    district: "Kurunegala",
+    photo: "https://images.unsplash.com/photo-1502767089025-6572583495b4",
+    totalOrder: 28,
+    cancelOrder: 3,
+    totalAmount: "LKR 33,420.00"
+  },
+  {
+    id: 6,
+    customerId: "CUST-1006",
+    name: "Bimsara Jayawardena",
+    address: "3 High Street, Negombo",
+    district: "Gampaha",
+    photo: "https://images.unsplash.com/photo-1603415526960-f7e0328fddb2",
+    totalOrder: 15,
+    cancelOrder: 1,
+    totalAmount: "LKR 16,800.00"
+  },
+  {
+    id: 7,
+    customerId: "CUST-1007",
+    name: "Isuri Hansika",
+    address: "12 Kings Avenue, Matara",
+    district: "Matara",
+    photo: "https://images.unsplash.com/photo-1527980965255-d3b416303d12",
+    totalOrder: 11,
+    cancelOrder: 0,
+    totalAmount: "LKR 13,350.00"
+  },
+  {
+    id: 8,
+    customerId: "CUST-1008",
+    name: "Janith Alwis",
+    address: "9 Rose Lane, Chilaw",
+    district: "Puttalam",
+    photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    totalOrder: 17,
+    cancelOrder: 4,
+    totalAmount: "LKR 20,000.00"
+  },
+  {
+    id: 9,
+    customerId: "CUST-1009",
+    name: "Lakmali Perera",
+    address: "88 Palm Drive, Kandy",
+    district: "Kandy",
+    photo: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c",
+    totalOrder: 22,
+    cancelOrder: 1,
+    totalAmount: "LKR 28,600.00"
+  },
+  {
+    id: 10,
+    customerId: "CUST-1010",
+    name: "Ashan De Silva",
+    address: "34 Park Avenue, Anuradhapura",
+    district: "Anuradhapura",
+    photo: "https://images.unsplash.com/photo-1614289323376-2f6c8ab81967",
+    totalOrder: 19,
+    cancelOrder: 2,
+    totalAmount: "LKR 21,200.00"
+  },
+  {
+    id: 11,
+    customerId: "CUST-1011",
+    name: "Gayani Samarasinghe",
+    address: "5 Lotus Road, Batticaloa",
+    district: "Batticaloa",
+    photo: "https://images.unsplash.com/photo-1599566150163-29194dcaad36",
+    totalOrder: 14,
+    cancelOrder: 1,
+    totalAmount: "LKR 17,100.00"
+  },
+  {
+    id: 12,
+    customerId: "CUST-1012",
+    name: "Dilshan Ranathunga",
+    address: "21 Ocean View, Kalutara",
+    district: "Kalutara",
+    photo: "https://images.unsplash.com/photo-1502764613149-7f1d229e2305",
+    totalOrder: 27,
+    cancelOrder: 3,
+    totalAmount: "LKR 35,400.00"
+  },
+  {
+    id: 13,
+    customerId: "CUST-1013",
+    name: "Ruwani Wijesekara",
+    address: "1 Railway Lane, Ratnapura",
+    district: "Ratnapura",
+    photo: "https://images.unsplash.com/photo-1589571894960-20bbe2828f8d",
+    totalOrder: 13,
+    cancelOrder: 0,
+    totalAmount: "LKR 14,950.00"
+  },
+  {
+    id: 14,
+    customerId: "CUST-1014",
+    name: "Kavindu Samarasinghe",
+    address: "39 Temple Road, Badulla",
+    district: "Badulla",
+    photo: "https://images.unsplash.com/photo-1603415526960-f7e0328fddb2",
+    totalOrder: 31,
+    cancelOrder: 2,
+    totalAmount: "LKR 38,100.00"
+  },
+  {
+    id: 15,
+    customerId: "CUST-1015",
+    name: "Menaka Fernando",
+    address: "60 Green Path, Jaffna",
+    district: "Jaffna",
+    photo: "https://images.unsplash.com/photo-1607746882042-944635dfe10e",
+    totalOrder: 10,
+    cancelOrder: 1,
+    totalAmount: "LKR 12,500.00"
+  }
+];
+
+
+
 export const parentsData = [
   {
     id: 1,
