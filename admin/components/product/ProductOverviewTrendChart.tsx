@@ -47,13 +47,13 @@ const data = [
   },
 ];
 
-const SellerOverviewLineChart = () => {
+const ProductOverviewTrendChart = () => {
   return (
     <div className="bg-white rounded-xl w-full h-[450px] p-4 border border-gray-200 shadow-md hover:shadow-lg flex flex-col">
           
           {/* TITLE */}
           <div className="flex justify-between items-center mb-4">
-            <h1 className="capitalize text-base font-semibold">Sellers Trend</h1>
+            <h1 className="capitalize text-base font-semibold">Product Trend</h1>
             <Image src="/moreDark.png" alt="icon" width={20} height={20} />
           </div>
     
@@ -61,9 +61,9 @@ const SellerOverviewLineChart = () => {
           <div className="flex-1 w-full h-full">
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
-                <Line type="monotone" dataKey="active" stroke="#FFDB85" strokeWidth={2} />
-                <Line type="monotone" dataKey="total" stroke="#9793FF" strokeWidth={2} />
-                <Line type="monotone" dataKey="suspended" stroke="#FFBCA1" strokeWidth={2} />
+                <Line type="monotone" dataKey="active" stroke="#0900FF" strokeWidth={2} />
+                <Line type="monotone" dataKey="total" stroke="#B1B1B1" strokeWidth={2} />
+                <Line type="monotone" dataKey="suspended" stroke="#A7A3FF" strokeWidth={2} />
                 <XAxis/>
                 </LineChart>
             </ResponsiveContainer>
@@ -71,18 +71,18 @@ const SellerOverviewLineChart = () => {
           <div className="flex justify-center gap-16">
         {/* LABEL */}
         <div className="flex flex-col gap-1 items-center">
-            <div className="w-5 h-5 bg-[#9793FF] rounded-full"></div>
+            <div className="w-5 h-5 bg-[#B1B1B1] rounded-full"></div>
             <h1 className="font-bold">1,232</h1>
             <h2 className="text-xs text-gray-400">Total</h2>
         </div>
 
         <div className="flex flex-col gap-1 items-center">
-            <div className="w-5 h-5 bg-[#FFDB85] rounded-full"></div>
+            <div className="w-5 h-5 bg-[#0900FF] rounded-full"></div>
             <h1 className="font-bold">1,232</h1>
             <h2 className="text-xs text-gray-400">Active</h2>
         </div>
         <div className="flex flex-col gap-1 items-center">
-            <div className="w-5 h-5 bg-[#FFBCA1] rounded-full"></div>
+            <div className="w-5 h-5 bg-[#A7A3FF] rounded-full"></div>
             <h1 className="font-bold">1,232</h1>
             <h2 className="text-xs text-gray-400">Suspended</h2>
         </div>
@@ -91,4 +91,7 @@ const SellerOverviewLineChart = () => {
   )
 }
 
-export default SellerOverviewLineChart
+export default ProductOverviewTrendChart
+
+
+

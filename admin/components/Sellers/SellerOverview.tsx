@@ -1,7 +1,7 @@
 import SellerOverviewBarchart from "./SellerOverviewBarchart";
 import SellerOverviewLineChart from "./SellerOverviewLineChart";
 import SellerOverviewPieChart from "./SellerOverviewPieChart";
-import StatCard from "./StatCard";
+import StatCard from "../StatCard";
 
 const SellerOverview = () => {
   return (

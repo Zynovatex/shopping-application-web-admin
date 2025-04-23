@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import SellerOverview from "@/components/SellerOverview";
+import SellerOverview from "@/components/Sellers/SellerOverview";
 import TableSearch from "@/components/ui/TableSearch";
 import Image from "next/image";
 import Pagination from "@/components/ui/Pagination";
