@@ -1,7 +1,7 @@
-import SellerOverviewBarchart from "../SellerOverviewBarchart";
-import SellerOverviewLineChart from "../SellerOverviewLineChart";
-import SellerOverviewPieChart from "../SellerOverviewPieChart";
 import StatCard from "../StatCard";
+import ProductOverviewBarChart from "./ProductOverviewBarChart";
+import ProductOverviewPieChart from "./ProductOverviewPieChart";
+import ProductOverviewTrendChart from "./ProductOverviewTrendChart";
 
 const SellerOverview = () => {
   return (
@@ -21,17 +21,17 @@ const SellerOverview = () => {
         
         {/* CHART 1 */}
         <div className="flex-1 min-w-0">
-          <SellerOverviewBarchart />
+          <ProductOverviewTrendChart/>
         </div>
 
         {/* CHART 2 */}
         <div className="flex-1 min-w-0">
-          <SellerOverviewPieChart />
+          <ProductOverviewPieChart/>
         </div>
 
         {/* CHART 3 */}
         <div className="flex-1 min-w-0">
-          <SellerOverviewLineChart />
+          <ProductOverviewBarChart/>
         </div>
 
       </div>

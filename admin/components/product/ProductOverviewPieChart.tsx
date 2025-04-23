@@ -5,13 +5,13 @@ import Image from "next/image"; // ✅ Fix: Added missing import
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const data = [
-  { name: "Fruits & Vegitables", value: 200 },
-  { name: "Dairy & Eggs", value: 500 },
-  { name: "Meat & Seafood", value: 300 },
-  { name: "Beverages", value: 300 },
+  { name: "Coffe Powder", value: 200 },
+  { name: "Kothu Rotti", value: 500 },
+  { name: "Chicken", value: 300 },
+  { name: "Milk", value: 300 },
 ];
 
-const COLORS = ["#9793FF", "#FFDB85", "#96FFCB", "#FFBCA1"];
+const COLORS = ["#6761FF", "#8480FF", "#A7A3FF", "#C7C5FF"];
 
 const RADIAN = Math.PI / 180;
 
@@ -49,12 +49,13 @@ const renderCustomizedLabel = ({
     </text>
   );
 };
-const SellerOverviewPieChart = () => {
+
+const ProductOverviewPieChart = () => {
   return (
     <div className="bg-white rounded-xl w-full h-[450px] p-4 border border-gray-200 shadow-md hover:shadow-lg flex flex-col">
           {/* TITLE */}
           <div className="flex justify-between items-center">
-            <h1 className="capitalize text-base font-semibold">Top Categories</h1>
+            <h1 className="capitalize text-base font-semibold">Top Products</h1>
             <Image src="/moreDark.png" alt="icon" width={20} height={20} />
           </div>
     
@@ -94,7 +95,7 @@ const SellerOverviewPieChart = () => {
             ))}
           </div>
         </div>
-  );
-};
+  )
+}
 
-export default SellerOverviewPieChart;
+export default ProductOverviewPieChart

@@ -1,7 +1,7 @@
-import SellerOverviewBarchart from "../SellerOverviewBarchart";
-import SellerOverviewLineChart from "../SellerOverviewLineChart";
-import SellerOverviewPieChart from "../SellerOverviewPieChart";
 import StatCard from "../StatCard";
+import OADoverviewBarchart from "./OADoverviewBarchart";
+import OADoverviewMonthlyTrendByCategory from "./OADoverviewMonthlyTrendByCategory";
+import OADoverviewOrderTrendLineChart from "./OADoverviewOrderTrendLineChart";
 
 const SellerOverview = () => {
   return (
@@ -21,17 +21,17 @@ const SellerOverview = () => {
         
         {/* CHART 1 */}
         <div className="flex-1 min-w-0">
-          <SellerOverviewBarchart />
+          <OADoverviewOrderTrendLineChart />
         </div>
 
         {/* CHART 2 */}
         <div className="flex-1 min-w-0">
-          <SellerOverviewPieChart />
+          <OADoverviewMonthlyTrendByCategory />
         </div>
 
         {/* CHART 3 */}
         <div className="flex-1 min-w-0">
-          <SellerOverviewLineChart />
+        <OADoverviewBarchart />
         </div>
 
       </div>
