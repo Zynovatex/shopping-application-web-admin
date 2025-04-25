@@ -1,4 +1,4 @@
-import StatCard from "../StatCard";
+import StatCard from "../common/StatCard";
 import OADoverviewBarchart from "./OADoverviewBarchart";
 import OADoverviewMonthlyTrendByCategory from "./OADoverviewMonthlyTrendByCategory";
 import OADoverviewOrderTrendLineChart from "./OADoverviewOrderTrendLineChart";

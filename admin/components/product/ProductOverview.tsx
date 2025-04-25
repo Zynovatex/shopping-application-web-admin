@@ -1,4 +1,4 @@
-import StatCard from "../StatCard";
+import StatCard from "../common/StatCard";
 import ProductOverviewBarChart from "./ProductOverviewBarChart";
 import ProductOverviewPieChart from "./ProductOverviewPieChart";
 import ProductOverviewTrendChart from "./ProductOverviewTrendChart";

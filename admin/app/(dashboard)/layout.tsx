@@ -1,8 +1,8 @@
 import "../globals.css"// Ensure correct path
 import Link from "next/link";
 import Image from "next/image";
-import Menu from "@/components/Menu";
-import Navbar from "@/components/Navbar";
+import Menu from "@/components/common/Menu";
+import Navbar from "@/components/common/Navbar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

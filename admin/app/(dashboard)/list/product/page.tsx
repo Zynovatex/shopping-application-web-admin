@@ -5,7 +5,7 @@ import TableSearch from "@/components/ui/TableSearch";
 import Image from "next/image";
 import Pagination from "@/components/ui/Pagination";
 import ProductOverview from "@/components/product/ProductOverview";
-import Table from "@/components/Table";
+import Table from "@/components/common/Table";
 import Link from "next/link";
 import { allProductData } from "@/lib/data";
 

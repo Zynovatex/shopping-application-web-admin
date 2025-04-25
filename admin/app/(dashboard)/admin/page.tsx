@@ -1,10 +1,10 @@
-import BestSellingProductChart from "@/components/BestSellingProductChart";
-import RevenueChart from "@/components/RevenueChart";
-import StatCard from "@/components/StatCard"; // ✅ Fixed import path
-import TrendsChart from "@/components/TrendsChart";
-import QuickShopPendingApproval from "@/components/QuickShopPendingApproval"; // ✅ Corrected component import
-import QuickProductPendingApproval from "@/components/QuickProductPendingApproval";
-import IncomeExpenseChart from "@/components/IncomeExpenseChart";
+import BestSellingProductChart from "@/components/home/BestSellingProductChart";
+import RevenueChart from "@/components/home/RevenueChart";
+import StatCard from "@/components/common/StatCard"; // ✅ Fixed import path
+import TrendsChart from "@/components/home/TrendsChart";
+import QuickShopPendingApproval from "@/components/home/QuickShopPendingApproval"; // ✅ Corrected component import
+import QuickProductPendingApproval from "@/components/home/QuickProductPendingApproval";
+import IncomeExpenseChart from "@/components/home/IncomeExpenseChart";
 
 const shopNames = [
   "Super Mart",
