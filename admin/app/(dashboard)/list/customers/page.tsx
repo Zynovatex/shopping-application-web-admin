@@ -136,6 +136,15 @@ function AllCustomers({
   columns: Column[];
   renderRow: (item: Customer) => React.ReactNode;
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(allCustomerData.length / itemsPerPage);
+  const currentData = allCustomerData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       {/* TOP */}
@@ -157,12 +166,12 @@ function AllCustomers({
       {/* TABLE LIST */}
       <Table<Customer>
         columns={columns}
-        data={allCustomerData}
+        data={currentData}
         renderRow={renderRow}
       />
 
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }

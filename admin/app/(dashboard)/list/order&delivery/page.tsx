@@ -178,6 +178,15 @@ function AllSellers({
   columns: Column[];
   AllProductsRenderRow: (item: OrderDetails) => React.ReactNode;
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(allOrderData.length / itemsPerPage);
+  const currentData = allOrderData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       <div className="flex items-center justify-between pb-2">
@@ -186,8 +195,8 @@ function AllSellers({
           <TableSearch />
         </div>
       </div>
-      <Table columns={columns} data={allOrderData} renderRow={AllProductsRenderRow} />
-      <Pagination />
+      <Table columns={columns} data={currentData} renderRow={AllProductsRenderRow} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }
@@ -199,6 +208,15 @@ function PendingApprovals({
   DeliveryDetailsColumn: Column[];
   pendingProductRenderRow: (item: DeliveryDetails) => React.ReactNode;
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(allDeliveryData.length / itemsPerPage);
+  const currentData = allDeliveryData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       <div className="flex items-center justify-between pb-2">
@@ -207,8 +225,12 @@ function PendingApprovals({
           <TableSearch />
         </div>
       </div>
-      <Table columns={DeliveryDetailsColumn} data={allDeliveryData} renderRow={pendingProductRenderRow} />
-      <Pagination />
+      <Table
+        columns={DeliveryDetailsColumn}
+        data={currentData}
+        renderRow={pendingProductRenderRow}
+      />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }

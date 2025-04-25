@@ -9,7 +9,7 @@ import Table from "@/components/common/Table";
 import Link from "next/link";
 import { allProductData } from "@/lib/data";
 
-type AllShops = {
+type AllProducts = {
   id: number;
   name: string;
   category: string;
@@ -31,47 +31,37 @@ const columns: Column[] = [
   { header: "Info", accessor: "info" },
   { header: "Category", accessor: "category", className: "hidden md:table-cell" },
   { header: "Actual Price", accessor: "actualPrice", className: "hidden md:table-cell" },
-  { header: "Discount Price", accessor: "discountPrice", className: "hidden md:table-cell" }, // ✅ typo fixed
+  { header: "Discount Price", accessor: "discountPrice", className: "hidden md:table-cell" },
   { header: "Stocks", accessor: "stocks", className: "hidden md:table-cell" },
   { header: "Ratings", accessor: "ratings", className: "hidden md:table-cell" },
   { header: "Actions", accessor: "actions" },
 ];
 
-export default function Seller() {
+export default function ProductPage() {
   const [activeTab, setActiveTab] = useState("overview");
 
   const tabs = [
     { id: "overview", label: "Overview" },
     { id: "all-products", label: "All Products" },
-    { id: "pending-approvals", label: "Pending Proudct Approvals" },
+    { id: "pending-approvals", label: "Pending Product Approvals" },
   ];
 
-  const AllProductsRenderRow = (item: AllShops) => (
+  const AllProductsRenderRow = (item: AllProducts) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
-      <td className="flex items-center gap-4 p-4 ">
-        <div className="flex gap-2 items-center">
-        <Image
-          src={item.photo}
-          alt={item.name}
-          width={40}
-          height={40}
-          className="w-10 h-10 rounded-sm object-cover"
-        />
-
-          <div className="flex flex-col">
-            <h3 className="font-semibold text-sm">{item.name}</h3>
-          </div>
+      <td className="flex items-center gap-4 p-4">
+        <Image src={item.photo} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-sm object-cover" />
+        <div className="flex flex-col">
+          <h3 className="font-semibold text-sm">{item.name}</h3>
         </div>
       </td>
-      <td className="hidden md:table-cell text-sm ">{item.category}</td>
-      <td className="hidden md:table-cell text-sm ">{item.actualPrice}</td>
+      <td className="hidden md:table-cell text-sm">{item.category}</td>
+      <td className="hidden md:table-cell text-sm">{item.actualPrice}</td>
       <td className="hidden md:table-cell text-sm">{item.discountPrice}</td>
       <td className="hidden md:table-cell text-sm">{item.stocks}</td>
-      {/*<td className="hidden md:table-cell text-sm">{item.verified ? "Yes" : "No"}</td> */} {/* verified */}
       <td className="hidden md:table-cell text-sm">{item.ratings}</td>
       <td>
         <div className="flex items-center gap-2">
-          <Link href={`/list/teachers/${item.id}`}>
+          <Link href={`/list/products/${item.id}`}>
             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7B5AF7]">
               <Image src="/view.png" alt="view" width={16} height={16} />
             </button>
@@ -81,54 +71,30 @@ export default function Seller() {
     </tr>
   );
 
-
-  const pendingProductRenderRow = (item: AllShops) => (
+  const pendingProductRenderRow = (item: AllProducts) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
-      <td className="flex items-center gap-4 p-4 ">
-        <div className="flex gap-2 items-center">
-        <Image
-          src={item.photo}
-          alt={item.name}
-          width={40}
-          height={40}
-          className="w-10 h-10 rounded-full object-cover"
-        />
-
-          <div className="flex flex-col">
-            <h3 className="font-semibold text-sm">{item.name}</h3>
-          </div>
+      <td className="flex items-center gap-4 p-4">
+        <Image src={item.photo} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
+        <div className="flex flex-col">
+          <h3 className="font-semibold text-sm">{item.name}</h3>
         </div>
       </td>
-      <td className="hidden md:table-cell text-sm ">{item.category}</td>
-      <td className="hidden md:table-cell text-sm ">{item.actualPrice}</td>
+      <td className="hidden md:table-cell text-sm">{item.category}</td>
+      <td className="hidden md:table-cell text-sm">{item.actualPrice}</td>
       <td className="hidden md:table-cell text-sm">{item.discountPrice}</td>
       <td className="hidden md:table-cell text-sm">{item.stocks}</td>
-      {/*<td className="hidden md:table-cell text-sm">{item.verified ? "Yes" : "No"}</td> */} {/* verified */}
       <td className="hidden md:table-cell text-sm">{item.ratings}</td>
       <td>
         <div className="flex items-center gap-2 flex-row">
-          <Link href={`/list/teachers/${item.id}`}>
+          <Link href={`/list/products/${item.id}`}>
             <div className="flex items-center gap-2">
-                    {/* Accept Button */}
-                    <button className="focus:outline-none cursor-pointer">
-                      <Image
-                        src="/accept-icon-image.png" // ✅ Replace with actual PNG file
-                        alt="Accept"
-                        width={20}
-                        height={20}
-                      />
-                    </button>
-            
-                    {/* Reject Button */}
-                    <button className="focus:outline-none cursor-pointer">
-                      <Image
-                        src="/reject-icon-image.png" // ✅ Replace with actual PNG file
-                        alt="Reject"
-                        width={20}
-                        height={20}
-                      />
-                    </button>
-                  </div>
+              <button className="focus:outline-none cursor-pointer">
+                <Image src="/accept-icon-image.png" alt="Accept" width={20} height={20} />
+              </button>
+              <button className="focus:outline-none cursor-pointer">
+                <Image src="/reject-icon-image.png" alt="Reject" width={20} height={20} />
+              </button>
+            </div>
           </Link>
         </div>
       </td>
@@ -169,9 +135,11 @@ export default function Seller() {
         <div className="p-6 w-full">
           {activeTab === "overview" && <Overview />}
           {activeTab === "all-products" && (
-            <AllSellers columns={columns} AllProductsRenderRow={AllProductsRenderRow} />
+            <AllProducts columns={columns} AllProductsRenderRow={AllProductsRenderRow} />
           )}
-          {activeTab === "pending-approvals" && <PendingApprovals columns={columns} pendingProductRenderRow={pendingProductRenderRow} />}
+          {activeTab === "pending-approvals" && (
+            <PendingApprovals columns={columns} pendingProductRenderRow={pendingProductRenderRow} />
+          )}
         </div>
       </div>
     </div>
@@ -181,23 +149,32 @@ export default function Seller() {
 function Overview() {
   return (
     <div className="text-lg font-semibold">
-      <ProductOverview/>
+      <ProductOverview />
     </div>
   );
 }
 
-function AllSellers({
+function AllProducts({
   columns,
   AllProductsRenderRow,
 }: {
   columns: Column[];
-  AllProductsRenderRow: (item: AllShops) => React.ReactNode;
+  AllProductsRenderRow: (item: AllProducts) => React.ReactNode;
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(allProductData.length / itemsPerPage);
+  const currentData = allProductData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="bg-white p-4 flex-1 m-2  mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
+    <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       {/* TOP */}
       <div className="flex items-center justify-between pb-2">
-        <h1 className="hidden md:block text-lg font-semibold">All shops</h1>
+        <h1 className="hidden md:block text-lg font-semibold">All Products</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
@@ -211,31 +188,36 @@ function AllSellers({
         </div>
       </div>
 
-      {/* TABLE LIST */}
-      <Table<AllShops>
+      <Table<AllProducts>
         columns={columns}
-        data={allProductData}
+        data={currentData}
         renderRow={AllProductsRenderRow}
       />
 
-      {/* PAGINATION */}
-      <Pagination />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }
-
-
-{/*in this code after this line i want to use the pendingProductRenderRow because i want to render another row , fix the error  */}
 
 function PendingApprovals({
   columns,
   pendingProductRenderRow,
 }: {
   columns: Column[];
-  pendingProductRenderRow: (item: AllShops) => React.ReactNode;
+  pendingProductRenderRow: (item: AllProducts) => React.ReactNode;
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const pendingData = allProductData.filter(product => product.id % 2 !== 0); // Simulated pending condition
+  const totalPages = Math.ceil(pendingData.length / itemsPerPage);
+  const currentData = pendingData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="bg-white p-4 flex-1 m-2  mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
+    <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       {/* TOP */}
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">Pending Approvals</h1>
@@ -252,16 +234,13 @@ function PendingApprovals({
         </div>
       </div>
 
-      {/* TABLE LIST */}
-      <Table<AllShops>
+      <Table<AllProducts>
         columns={columns}
-        data={allProductData}
+        data={currentData}
         renderRow={pendingProductRenderRow}
       />
 
-      {/* PAGINATION */}
-      <Pagination />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }
-

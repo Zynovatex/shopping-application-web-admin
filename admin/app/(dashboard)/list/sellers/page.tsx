@@ -32,13 +32,13 @@ const columns: Column[] = [
   { header: "Info", accessor: "info" },
   { header: "Category", accessor: "category", className: "hidden md:table-cell" },
   { header: "Address", accessor: "address", className: "hidden md:table-cell" },
-  { header: "District", accessor: "district", className: "hidden md:table-cell" }, // ✅ typo fixed
+  { header: "District", accessor: "district", className: "hidden md:table-cell" },
   { header: "Area", accessor: "area", className: "hidden md:table-cell" },
   { header: "Type", accessor: "type", className: "hidden md:table-cell" },
   { header: "Actions", accessor: "actions" },
 ];
 
-export default function Seller() {
+export default function SellerPage() {
   const [activeTab, setActiveTab] = useState("overview");
 
   const tabs = [
@@ -46,95 +46,6 @@ export default function Seller() {
     { id: "all-sellers", label: "All Shops" },
     { id: "pending-approvals", label: "Pending Approvals" },
   ];
-
-  const renderRow = (item: AllShops) => (
-    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
-      <td className="flex items-center gap-4 p-4 ">
-        <div className="flex gap-2 items-center">
-        <Image
-          src={item.photo}
-          alt={item.name}
-          width={40}
-          height={40}
-          className="w-10 h-10 rounded-full object-cover"
-        />
-
-          <div className="flex flex-col">
-            <h3 className="font-semibold text-sm">{item.name}</h3>
-          </div>
-        </div>
-      </td>
-      <td className="hidden md:table-cell text-sm ">{item.category}</td>
-      <td className="hidden md:table-cell text-sm ">{item.address}</td>
-      <td className="hidden md:table-cell text-sm">{item.district}</td>
-      <td className="hidden md:table-cell text-sm">{item.area}</td>
-      {/*<td className="hidden md:table-cell text-sm">{item.verified ? "Yes" : "No"}</td> */} {/* verified */}
-      <td className="hidden md:table-cell text-sm">{item.type}</td>
-      <td>
-        <div className="flex items-center gap-2">
-          <Link href={`/list/teachers/${item.id}`}>
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7B5AF7]">
-              <Image src="/view.png" alt="view" width={16} height={16} />
-            </button>
-          </Link>
-        </div>
-      </td>
-    </tr>
-  );
-
-
-  const renderRow2 = (item: AllShops) => (
-    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
-      <td className="flex items-center gap-4 p-4 ">
-        <div className="flex gap-2 items-center">
-        <Image
-          src={item.photo}
-          alt={item.name}
-          width={40}
-          height={40}
-          className="w-10 h-10 rounded-full object-cover"
-        />
-
-          <div className="flex flex-col">
-            <h3 className="font-semibold text-sm">{item.name}</h3>
-          </div>
-        </div>
-      </td>
-      <td className="hidden md:table-cell text-sm ">{item.category}</td>
-      <td className="hidden md:table-cell text-sm ">{item.address}</td>
-      <td className="hidden md:table-cell text-sm">{item.district}</td>
-      <td className="hidden md:table-cell text-sm">{item.area}</td>
-      {/*<td className="hidden md:table-cell text-sm">{item.verified ? "Yes" : "No"}</td> */} {/* verified */}
-      <td className="hidden md:table-cell text-sm">{item.type}</td>
-      <td>
-        <div className="flex items-center gap-2 flex-row">
-          <Link href={`/list/teachers/${item.id}`}>
-            <div className="flex items-center gap-2">
-                    {/* Accept Button */}
-                    <button className="focus:outline-none cursor-pointer">
-                      <Image
-                        src="/accept-icon-image.png" // ✅ Replace with actual PNG file
-                        alt="Accept"
-                        width={20}
-                        height={20}
-                      />
-                    </button>
-            
-                    {/* Reject Button */}
-                    <button className="focus:outline-none cursor-pointer">
-                      <Image
-                        src="/reject-icon-image.png" // ✅ Replace with actual PNG file
-                        alt="Reject"
-                        width={20}
-                        height={20}
-                      />
-                    </button>
-                  </div>
-          </Link>
-        </div>
-      </td>
-    </tr>
-  );
 
   return (
     <div>
@@ -168,37 +79,47 @@ export default function Seller() {
 
         {/* Tab Content */}
         <div className="p-6 w-full">
-          {activeTab === "overview" && <Overview />}
-          {activeTab === "all-sellers" && (
-            <AllSellers columns={columns} renderRow={renderRow} />
-          )}
-          {activeTab === "pending-approvals" && <PendingApprovals columns={columns} renderRow2={renderRow2} />}
+          {activeTab === "overview" && <SellerOverview />}
+          {activeTab === "all-sellers" && <AllSellers />}
+          {activeTab === "pending-approvals" && <PendingApprovals />}
         </div>
       </div>
     </div>
   );
 }
 
-function Overview() {
-  return (
-    <div className="text-lg font-semibold">
-      <SellerOverview />
-    </div>
-  );
-}
+function AllSellers() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
-function AllSellers({
-  columns,
-  renderRow,
-}: {
-  columns: Column[];
-  renderRow: (item: AllShops) => React.ReactNode;
-}) {
+  const totalPages = Math.ceil(allShopData.length / itemsPerPage);
+  const currentData = allShopData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const renderRow = (item: AllShops) => (
+    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
+      <td className="flex items-center gap-4 p-4">
+        <Image src={item.photo} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
+        <div><h3 className="font-semibold text-sm">{item.name}</h3></div>
+      </td>
+      <td className="hidden md:table-cell text-sm">{item.category}</td>
+      <td className="hidden md:table-cell text-sm">{item.address}</td>
+      <td className="hidden md:table-cell text-sm">{item.district}</td>
+      <td className="hidden md:table-cell text-sm">{item.area}</td>
+      <td className="hidden md:table-cell text-sm">{item.type}</td>
+      <td>
+        <Link href={`/list/sellers/${item.id}`}>
+          <button className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7B5AF7]">
+            <Image src="/view.png" alt="view" width={16} height={16} />
+          </button>
+        </Link>
+      </td>
+    </tr>
+  );
+
   return (
-    <div className="bg-white p-4 flex-1 m-2  mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg ">
-      {/* TOP */}
+    <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       <div className="flex items-center justify-between pb-2">
-        <h1 className="hidden md:block text-lg font-semibold">All shops</h1>
+        <h1 className="hidden md:block text-lg font-semibold">All Shops</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
@@ -212,44 +133,47 @@ function AllSellers({
         </div>
       </div>
 
-      {/* TABLE LIST */}
-      <Table<AllShops>
-        columns={columns}
-        data={allShopData}
-        renderRow={renderRow}
-      />
+      <Table<AllShops> columns={columns} data={currentData} renderRow={renderRow} />
 
-      {/* PAGINATION */}
-      <Pagination />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }
 
+function PendingApprovals() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
+  const pendingData = allShopData.filter((shop) => !shop.verified); // ✅ Only unverified shops
+  const totalPages = Math.ceil(pendingData.length / itemsPerPage);
+  const currentData = pendingData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  const renderRow2 = (item: AllShops) => (
+    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
+      <td className="flex items-center gap-4 p-4">
+        <Image src={item.photo} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
+        <div><h3 className="font-semibold text-sm">{item.name}</h3></div>
+      </td>
+      <td className="hidden md:table-cell text-sm">{item.category}</td>
+      <td className="hidden md:table-cell text-sm">{item.address}</td>
+      <td className="hidden md:table-cell text-sm">{item.district}</td>
+      <td className="hidden md:table-cell text-sm">{item.area}</td>
+      <td className="hidden md:table-cell text-sm">{item.type}</td>
+      <td>
+        <div className="flex items-center gap-2">
+          <button className="focus:outline-none cursor-pointer">
+            <Image src="/accept-icon-image.png" alt="Accept" width={20} height={20} />
+          </button>
+          <button className="focus:outline-none cursor-pointer">
+            <Image src="/reject-icon-image.png" alt="Reject" width={20} height={20} />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
 
-
-
-
-
-
-
-
-
-
-
-{/*in this code after this line i want to use the renderRow2 because i want to render another row , fix the error  */}
-
-function PendingApprovals({
-  columns,
-  renderRow2,
-}: {
-  columns: Column[];
-  renderRow2: (item: AllShops) => React.ReactNode;
-}) {
   return (
-    <div className="bg-white p-4 flex-1 m-2  mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg ">
-      {/* TOP */}
+    <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">Pending Approvals</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
@@ -265,16 +189,9 @@ function PendingApprovals({
         </div>
       </div>
 
-      {/* TABLE LIST */}
-      <Table<AllShops>
-        columns={columns}
-        data={allShopData}
-        renderRow={renderRow2}
-      />
+      <Table<AllShops> columns={columns} data={currentData} renderRow={renderRow2} />
 
-      {/* PAGINATION */}
-      <Pagination />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }
-
