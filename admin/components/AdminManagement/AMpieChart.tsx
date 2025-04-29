@@ -4,20 +4,14 @@ import React from "react";
 import Image from "next/image";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-// Dummy Data (Admin Page Access Short Names)
-const data = [
-  { name: "Product", value: 40 },
-  { name: "Order", value: 30 },
-  { name: "Analytics", value: 20 },
-  { name: "Seller", value: 10 },
-];
+interface ChartData {
+  name: string;
+  value: number;
+}
 
-// Blue shades for Admin Section
 const COLORS = ["#3B82F6", "#60A5FA", "#93C5FD", "#BFDBFE"];
-
 const RADIAN = Math.PI / 180;
 
-// Label Rendering for Inside Pie
 const renderCustomizedLabel = ({
   cx,
   cy,
@@ -25,14 +19,7 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
-}: {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  innerRadius: number;
-  outerRadius: number;
-  percent: number;
-}) => {
+}: any) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
@@ -51,17 +38,16 @@ const renderCustomizedLabel = ({
   );
 };
 
-const AMpieChart = () => {
+const AMpieChart = ({ data }: { data: ChartData[] }) => {
   return (
     <div className="bg-white rounded-xl w-full h-[450px] p-4 border border-gray-200 shadow-md hover:shadow-lg flex flex-col">
-      
-      {/* TITLE */}
+      {/* Title */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="capitalize text-base font-semibold">Admin Page Access Breakdown</h1>
         <Image src="/moreDark.png" alt="icon" width={20} height={20} />
       </div>
 
-      {/* CHART */}
+      {/* Chart */}
       <div className="w-full h-[280px] flex justify-center items-center">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -83,7 +69,7 @@ const AMpieChart = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* LEGEND */}
+      {/* Legend */}
       <div className="flex justify-center gap-8 mt-4 flex-wrap">
         {data.map((item, index) => (
           <div key={index} className="flex flex-col items-center">
@@ -96,7 +82,6 @@ const AMpieChart = () => {
           </div>
         ))}
       </div>
-
     </div>
   );
 };

@@ -1,21 +1,25 @@
+"use client";
+
+import React from "react";
 import Image from "next/image";
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 
-// Dummy Data for Admin Roles
-const data = [
-  { name: "Product Manager", Actions: 5400 },
-  { name: "Order Admin", Actions: 3900 },
-  { name: "Analytics Admin", Actions: 2800 },
-  { name: "Seller Manager", Actions: 3800 },
-  { name: "Support Admin", Actions: 2300 },
-];
+interface RoleActivityData {
+  name: string;
+  Actions: number;
+}
 
-const AMbarChart = () => {
+const AMbarChart = ({ data }: { data: RoleActivityData[] }) => {
   return (
     <div className="bg-white rounded-xl w-full h-[450px] p-4 border border-gray-200 shadow-md hover:shadow-lg flex flex-col">
-
       {/* TITLE */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="capitalize text-base font-semibold">Top Admin Roles by Activity</h1>
@@ -52,7 +56,6 @@ const AMbarChart = () => {
           </BarChart>
         </ResponsiveContainer>
       </div>
-
     </div>
   );
 };
