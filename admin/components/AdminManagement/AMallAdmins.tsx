@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import TableSearch from "@/components/ui/TableSearch";
 import Pagination from "@/components/ui/Pagination";
 import Table from "@/components/common/Table";
-import Image from "next/image";
-import Link from "next/link";
-import { allAdminData } from "@/lib/data"; // Your 30 admins data
+import AdminDetailsModal from "@/components/modals/AdminDetailsModal";
+import { useLoading } from "../../context/LoadingContext";
+import axios from "axios";
+import { saveAs } from "file-saver";
 
-// Admin type
-type Admin = {
+export interface Admin {
   id: number;
   adminId: string;
   name: string;
@@ -18,17 +19,15 @@ type Admin = {
   role: string;
   status: string;
   lastLogin: string;
-  categories: string[]; // ✅ NEW: Array of categories
-};
+  categories: string[];
+}
 
-// Column type
 type Column = {
   header: string;
   accessor: string;
   className?: string;
 };
 
-// Table columns
 const columns: Column[] = [
   { header: "Info", accessor: "info" },
   { header: "Email", accessor: "email", className: "hidden md:table-cell" },
@@ -40,18 +39,87 @@ const columns: Column[] = [
 ];
 
 export default function AMallAdmins() {
+  const [admins, setAdmins] = useState<Admin[]>([]);
+  const [filteredAdmins, setFilteredAdmins] = useState<Admin[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState<{ [key: string]: string[] }>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+  const { setLoading } = useLoading();
 
-  const totalPages = Math.ceil(allAdminData.length / itemsPerPage);
-  const currentData = allAdminData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
+  const currentData = filteredAdmins.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const isSuperAdmin = true; // Replace with actual logic later
+
+  useEffect(() => {
+    const fetchAdmins = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:8080/api/admin/admins", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setAdmins(res.data);
+        setFilteredAdmins(res.data);
+      } catch (error) {
+        console.error("Error fetching admin data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdmins();
+  }, [setLoading]);
+
+  useEffect(() => {
+    let filtered = admins;
+
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      filtered = filtered.filter((admin) =>
+        admin.name.toLowerCase().includes(lowerSearch) ||
+        admin.email.toLowerCase().includes(lowerSearch)
+      );
+    }
+
+    if (filters.categories && filters.categories.length > 0) {
+      filtered = filtered.filter((admin) =>
+        admin.categories.some((cat) => filters.categories.includes(cat))
+      );
+    }
+
+    if (filters.status && filters.status.length > 0) {
+      filtered = filtered.filter((admin) => filters.status.includes(admin.status));
+    }
+
+    setFilteredAdmins(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, filters, admins]);
+
+  const exportToCSV = () => {
+    const headers = ["Admin ID", "Name", "Email", "Role", "Categories", "Status", "Last Login"];
+    const rows = filteredAdmins.map((admin) => [
+      admin.adminId,
+      admin.name,
+      admin.email,
+      admin.role,
+      admin.categories.join(", "),
+      admin.status,
+      admin.lastLogin,
+    ]);
+
+    const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "admins.csv");
+  };
 
   const renderRow = (item: Admin) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
-      {/* Info */}
       <td className="flex items-center gap-4 p-4">
         <div className="flex gap-2 items-center">
           <Image
@@ -67,14 +135,8 @@ export default function AMallAdmins() {
           </div>
         </div>
       </td>
-
-      {/* Email */}
       <td className="hidden md:table-cell text-sm">{item.email}</td>
-
-      {/* Role */}
       <td className="hidden md:table-cell text-sm">{item.role}</td>
-
-      {/* Categories */}
       <td className="hidden md:table-cell text-sm">
         <div className="flex flex-wrap gap-1">
           {item.categories.map((cat, index) => (
@@ -84,27 +146,31 @@ export default function AMallAdmins() {
           ))}
         </div>
       </td>
-
-      {/* Status */}
       <td className="hidden md:table-cell text-sm">
-        <span className={`px-2 py-1 rounded-full text-xs font-semibold 
-          ${item.status === "Active" ? "bg-green-100 text-green-600" : "bg-yellow-100 text-yellow-600"}
-        `}>
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+            item.status === "Active"
+              ? "bg-green-100 text-green-600"
+              : item.status === "Pending"
+              ? "bg-yellow-100 text-yellow-600"
+              : "bg-gray-100 text-gray-500"
+          }`}
+        >
           {item.status}
         </span>
       </td>
-
-      {/* Last Login */}
       <td className="hidden md:table-cell text-sm">{item.lastLogin}</td>
-
-      {/* Actions */}
       <td>
         <div className="flex items-center gap-2">
-          <Link href={`/admins/${item.id}`}>
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7B5AF7]">
-              <Image src="/view.png" alt="view" width={16} height={16} />
-            </button>
-          </Link>
+          <button
+            className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7B5AF7]"
+            onClick={() => {
+              setSelectedAdmin(item);
+              setIsModalOpen(true);
+            }}
+          >
+            <Image src="/view.png" alt="view" width={16} height={16} />
+          </button>
         </div>
       </td>
     </tr>
@@ -112,35 +178,35 @@ export default function AMallAdmins() {
 
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg w-full">
-      {/* Search and Controls */}
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">All Admins</h1>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
-          <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
-              <Image src="/filter.png" alt="filter" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
-              <Image src="/sort.png" alt="sort" width={14} height={14} />
-            </button>
-          </div>
-        </div>
+        <TableSearch
+          onSearch={setSearchTerm}
+          onFilterChange={setFilters}
+          onClear={() => {
+            setSearchTerm("");
+            setFilters({});
+          }}
+          onExport={exportToCSV}
+          filterOptions={{
+            categories: ["SELLER", "PRODUCT", "ORDERS", "CUSTOMER", "ANALYTICS"],
+            status: ["Active", "Pending", "Disabled"],
+          }}
+        />
       </div>
 
-      {/* Admins Table */}
-      <Table<Admin>
-        columns={columns}
-        data={currentData}
-        renderRow={renderRow}
-      />
+      <Table<Admin> columns={columns} data={currentData} renderRow={renderRow} />
 
-      {/* Pagination */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+
+      {selectedAdmin && (
+        <AdminDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          admin={selectedAdmin}
+          isSuperAdmin={isSuperAdmin}
+        />
+      )}
     </div>
   );
 }

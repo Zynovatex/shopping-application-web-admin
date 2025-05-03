@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import TableSearch from "@/components/ui/TableSearch";
 import Pagination from "@/components/ui/Pagination";
 import Table from "@/components/common/Table";
-import { allAdminLogData } from "@/lib/data"; // Your dummy admin logs data
+import { allAdminLogData } from "@/lib/data";
+import AdminLogDetailsModal from "@/components/AdminManagement/AdminLogDetailsModal";
+import { saveAs } from "file-saver";
 
 // Admin Log type
 type AdminLog = {
@@ -25,83 +28,159 @@ type Column = {
   className?: string;
 };
 
-// Table columns
 const columns: Column[] = [
   { header: "Info", accessor: "info" },
   { header: "Action", accessor: "action", className: "hidden md:table-cell" },
   { header: "Target", accessor: "targetType", className: "hidden md:table-cell" },
   { header: "Target ID", accessor: "targetId", className: "hidden md:table-cell" },
   { header: "Description", accessor: "description", className: "hidden md:table-cell" },
-  { header: "Timestamp", accessor: "timestamp" }
+  { header: "Timestamp", accessor: "timestamp" },
 ];
 
 export default function AMadminLogs() {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [logs, setLogs] = useState<AdminLog[]>([]);
+  const [filteredLogs, setFilteredLogs] = useState<AdminLog[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState<{ [key: string]: string[] }>({});
+  const [selectedLog, setSelectedLog] = useState<AdminLog | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const totalPages = Math.ceil(allAdminLogData.length / itemsPerPage);
-  const currentData = allAdminLogData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const itemsPerPage = 10;
+  const useMock = true;
+
+  useEffect(() => {
+    const fetchLogs = async () => {
+      if (useMock) {
+        setLogs(allAdminLogData);
+        setFilteredLogs(allAdminLogData);
+      } else {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get("http://localhost:8080/api/admin/logs", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setLogs(response.data);
+          setFilteredLogs(response.data);
+        } catch (error) {
+          console.error("Failed to fetch logs:", error);
+        }
+      }
+    };
+    fetchLogs();
+  }, []);
+
+  useEffect(() => {
+    let filtered = logs;
+
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      filtered = filtered.filter((log) =>
+        log.adminName.toLowerCase().includes(lowerSearch) ||
+        log.adminId.toLowerCase().includes(lowerSearch)
+      );
+    }
+
+    if (filters.admin && filters.admin.length > 0) {
+      filtered = filtered.filter((log) => filters.admin.includes(log.adminName));
+    }
+
+    if (filters.target && filters.target.length > 0) {
+      filtered = filtered.filter((log) => filters.target.includes(log.targetType));
+    }
+
+    if (filters.action && filters.action.length > 0) {
+      filtered = filtered.filter((log) => filters.action.includes(log.action));
+    }
+
+    setFilteredLogs(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, filters, logs]);
+
+  const handleSearch = (term: string) => setSearchTerm(term);
+  const handleFilterChange = (newFilters: { [key: string]: string[] }) => setFilters(newFilters);
+  const handleClear = () => {
+    setSearchTerm("");
+    setFilters({});
+  };
+
+  const handleExport = () => {
+    const headers = ["Admin ID", "Admin Name", "Action", "Target", "Target ID", "Description", "Timestamp"];
+    const rows = filteredLogs.map((log) => [
+      log.adminId,
+      log.adminName,
+      log.action,
+      log.targetType,
+      log.targetId,
+      log.description,
+      log.timestamp,
+    ]);
+
+    const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "admin_logs.csv");
+  };
+
+  const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+  const currentData = filteredLogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleRowClick = (log: AdminLog) => {
+    setSelectedLog(log);
+    setIsModalOpen(true);
+  };
 
   const renderRow = (item: AdminLog) => (
-    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
-      {/* Info */}
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF] cursor-pointer"
+      onClick={() => handleRowClick(item)}
+    >
       <td className="p-4">
         <div className="flex flex-col">
           <p className="text-xs text-gray-500">{item.adminId}</p>
           <h3 className="font-semibold text-sm">{item.adminName}</h3>
         </div>
       </td>
-
-      {/* Action */}
       <td className="hidden md:table-cell text-sm">{item.action}</td>
-
-      {/* Target */}
       <td className="hidden md:table-cell text-sm">{item.targetType}</td>
-
-      {/* Target ID */}
       <td className="hidden md:table-cell text-sm">{item.targetId}</td>
-
-      {/* Description */}
       <td className="hidden md:table-cell text-sm">{item.description}</td>
-
-      {/* Timestamp */}
       <td className="text-sm">{item.timestamp}</td>
     </tr>
   );
 
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg w-full">
-      {/* Search and Controls */}
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">Admin Logs</h1>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
-          <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
-              <img src="/filter.png" alt="filter" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
-              <img src="/sort.png" alt="sort" width={14} height={14} />
-            </button>
-          </div>
-        </div>
+        <TableSearch
+          onSearch={handleSearch}
+          onFilterChange={handleFilterChange}
+          onClear={handleClear}
+          onExport={handleExport}
+          filterOptions={{
+            admin: Array.from(new Set(logs.map((l) => l.adminName))),
+            target: Array.from(new Set(logs.map((l) => l.targetType))),
+            action: Array.from(new Set(logs.map((l) => l.action))),
+          }}
+        />
       </div>
 
-      {/* Admin Logs Table */}
-      <Table<AdminLog>
-        columns={columns}
-        data={currentData}
-        renderRow={renderRow}
-      />
+      <Table<AdminLog> columns={columns} data={currentData} renderRow={renderRow} />
 
-      {/* Pagination */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
+      />
+
+      {/* Log Detail Modal */}
+      <AdminLogDetailsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        log={selectedLog}
       />
     </div>
   );

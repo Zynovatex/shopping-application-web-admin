@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import AMoverview from "@/components/AdminManagement/AMoverview";
 import AMallAdmins from "@/components/AdminManagement/AMallAdmins";
 import AMcreateAdmin from "@/components/AdminManagement/AMcreateAdmin";
-import AMroleAccessControl from "@/components/AdminManagement/AMroleAccessControl";
 import AMadminLogs from "@/components/AdminManagement/AMadminlogs";
 
 export default function AdminManagement() {
@@ -14,7 +13,6 @@ export default function AdminManagement() {
     { id: "overview", label: "Overview" },
     { id: "all-admins", label: "All Admins" },
     { id: "create-admin", label: "Create Admin" },
-    { id: "role-access", label: "Role Access Control" },
     { id: "admin-logs", label: "Admin Logs" },
   ];
 
@@ -53,7 +51,6 @@ export default function AdminManagement() {
           {activeTab === "overview" && <AMoverview />}
           {activeTab === "all-admins" && <AMallAdmins />}
           {activeTab === "create-admin" && <AMcreateAdmin />}
-          {activeTab === "role-access" && <AMroleAccessControl />}
           {activeTab === "admin-logs" && <AMadminLogs />}
         </div>
       </div>

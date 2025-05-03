@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import axios from "axios";
 
 interface ChartData {
   name: string;
@@ -12,6 +13,7 @@ interface ChartData {
 const COLORS = ["#3B82F6", "#60A5FA", "#93C5FD", "#BFDBFE"];
 const RADIAN = Math.PI / 180;
 
+// Label inside the pie slices
 const renderCustomizedLabel = ({
   cx,
   cy,
@@ -38,7 +40,16 @@ const renderCustomizedLabel = ({
   );
 };
 
+const MOCK_DATA: ChartData[] = [
+  { name: "Product", value: 40 },
+  { name: "Order", value: 30 },
+  { name: "Analytics", value: 20 },
+  { name: "Seller", value: 10 },
+];
+
 const AMpieChart = ({ data }: { data: ChartData[] }) => {
+  const safeData = data.length ? data : MOCK_DATA;
+
   return (
     <div className="bg-white rounded-xl w-full h-[450px] p-4 border border-gray-200 shadow-md hover:shadow-lg flex flex-col">
       {/* Title */}
@@ -52,7 +63,7 @@ const AMpieChart = ({ data }: { data: ChartData[] }) => {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={data}
+              data={safeData}
               cx="50%"
               cy="50%"
               labelLine={false}
@@ -61,7 +72,7 @@ const AMpieChart = ({ data }: { data: ChartData[] }) => {
               fill="#8884d8"
               dataKey="value"
             >
-              {data.map((entry, index) => (
+              {safeData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
@@ -71,14 +82,14 @@ const AMpieChart = ({ data }: { data: ChartData[] }) => {
 
       {/* Legend */}
       <div className="flex justify-center gap-8 mt-4 flex-wrap">
-        {data.map((item, index) => (
+        {safeData.map((item, index) => (
           <div key={index} className="flex flex-col items-center">
             <div
               className="w-4 h-4 rounded-full mb-1"
               style={{ backgroundColor: COLORS[index] }}
             ></div>
             <h1 className="font-bold text-lg">{item.value}%</h1>
-            <h2 className="text-sm text-gray-400">{item.name}</h2>
+            <h2 className="text-[12px] text-gray-400">{item.name}</h2>
           </div>
         ))}
       </div>

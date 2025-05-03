@@ -14,6 +14,67 @@ const iconUrls = [
   "/statcart-icon-4.png",
 ];
 
+const USE_MOCK = false; // Toggle: true = mock, false = live
+
+const mockOverviewData = {
+  stats: [
+    {
+      iconUrl: "/statcart-icon-1.png",
+      title: "Mock Total Admins",
+      value: "5,432",
+      statusChange: "↑ 3.5%",
+      status: "Compared to last year",
+      isPositive: true,
+    },
+    {
+      iconUrl: "/statcart-icon-2.png",
+      title: "Mock Active Admins",
+      value: "3,210",
+      statusChange: "↓ 1.2%",
+      status: "Compared to last year",
+      isPositive: false,
+    },
+    {
+      iconUrl: "/statcart-icon-3.png",
+      title: "Mock 7 Days Activity",
+      value: "120",
+      statusChange: "↑ 0.8%",
+      status: "Compared to last 7 days",
+      isPositive: true,
+    },
+    {
+      iconUrl: "/statcart-icon-4.png",
+      title: "Mock Pending Invites",
+      value: "89",
+      statusChange: "",
+      status: "",
+      isPositive: false,
+    },
+  ],
+  activityTrend: [
+    { name: "Day 1", total: 15, active: 10, pending: 5 },
+    { name: "Day 2", total: 18, active: 12, pending: 6 },
+    { name: "Day 3", total: 20, active: 14, pending: 6 },
+    { name: "Day 4", total: 22, active: 15, pending: 7 },
+    { name: "Day 5", total: 25, active: 18, pending: 7 },
+    { name: "Day 6", total: 28, active: 20, pending: 8 },
+    { name: "Day 7", total: 30, active: 22, pending: 8 },
+  ],
+  rolesByActivity: [
+    { name: "M Product Manager", Actions: 1200 },
+    { name: "M Order Admin", Actions: 950 },
+    { name: "M Analytics Admin", Actions: 740 },
+    { name: "M Seller Manager", Actions: 820 },
+    { name: "M Support Admin", Actions: 660 },
+  ],
+  pageAccessBreakdown: [
+    { name: "M Product", value: 35 },
+    { name: "M Order", value: 25 },
+    { name: "M Analytics", value: 25 },
+    { name: "M Seller", value: 15 },
+  ],
+};
+
 const AMoverview = () => {
   const [overviewData, setOverviewData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -21,25 +82,29 @@ const AMoverview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:8080/api/admin/overview", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        if (USE_MOCK) {
+          setOverviewData(mockOverviewData);
+        } else {
+          const token = localStorage.getItem("token");
+          const res = await axios.get("http://localhost:8080/api/admin/overview", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-        const updatedStats = res.data.stats.map((stat: any, i: number) => ({
-          ...stat,
-          iconUrl: iconUrls[i] || "/default-icon.png",
-          statusChange: "8.6%", // placeholder
-          status: "From last month",
-          isPositive: i % 2 === 0 ? true : false, // sample logic
-        }));
+          const updatedStats = res.data.stats.map((stat: any, i: number) => ({
+            ...stat,
+            iconUrl: iconUrls[i] || "/default-icon.png",
+            statusChange: i === 3 ? "" : i % 2 === 0 ? "↑ 8.6%" : "↓ 8.6%",
+            status: i === 3 ? "" : i === 2 ? "Compared to last 7 days" : "Compared to last year",
+            isPositive: i === 3 ? false : i % 2 === 0,
+          }));
 
-        setOverviewData({
-          ...res.data,
-          stats: updatedStats,
-        });
+          setOverviewData({
+            ...res.data,
+            stats: updatedStats,
+          });
+        }
       } catch (err) {
         console.error("Failed to load admin overview data:", err);
         setOverviewData(null);

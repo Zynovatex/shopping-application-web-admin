@@ -17,6 +17,8 @@ const StatCard: React.FC<StatCardProps> = ({
   status,
   isPositive,
 }) => {
+  const showTrend = statusChange && status; // Only show arrow and text if both exist
+
   return (
     <div className="flex md:flex-1 sm:flex-1 flex-col p-5 min-w-[160px] rounded-xl border border-gray-200 shadow-md hover:shadow-lg bg-white">
       <div className="flex items-center space-x-2">
@@ -36,18 +38,20 @@ const StatCard: React.FC<StatCardProps> = ({
 
       <h2 className="text-2xl font-semibold mt-2">{value}</h2>
 
-      <div className="flex items-center text-xs mt-3">
-        <Image
-          src={isPositive ? "/up-trend-icon.png" : "/down-trend-icon.png"}
-          alt="trend"
-          width={14}
-          height={14}
-        />
-        <span className={isPositive ? "text-green-500 ml-1" : "text-red-500 ml-1"}>
-          {statusChange}
-        </span>
-        <span className="text-gray-400 ml-2">{status}</span>
-      </div>
+      {showTrend && (
+        <div className="flex items-center text-xs mt-3">
+          <Image
+            src={isPositive ? "/up-trend-icon.png" : "/down-trend-icon.png"}
+            alt="trend"
+            width={14}
+            height={14}
+          />
+          <span className={isPositive ? "text-green-500 ml-1" : "text-red-500 ml-1"}>
+            {statusChange}
+          </span>
+          <span className="text-gray-400 ml-2">{status}</span>
+        </div>
+      )}
     </div>
   );
 };

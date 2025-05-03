@@ -18,6 +18,8 @@ interface RoleActivityData {
 }
 
 const AMbarChart = ({ data }: { data: RoleActivityData[] }) => {
+  const safeData = data || [];
+
   return (
     <div className="bg-white rounded-xl w-full h-[450px] p-4 border border-gray-200 shadow-md hover:shadow-lg flex flex-col">
       {/* TITLE */}
@@ -30,7 +32,7 @@ const AMbarChart = ({ data }: { data: RoleActivityData[] }) => {
       <div className="flex-1 w-full h-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
-            data={data} 
+            data={safeData} 
             margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
             barCategoryGap="20%"
           >
