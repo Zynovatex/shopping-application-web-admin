@@ -1,3 +1,4 @@
+// 📄 File: components/AdminManagement/AMallAdmins.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,7 +8,7 @@ import Pagination from "@/components/ui/Pagination";
 import Table from "@/components/common/Table";
 import AdminDetailsModal from "@/components/modals/AdminDetailsModal";
 import { useLoading } from "../../context/LoadingContext";
-import axios from "axios";
+import axiosClient from "@/lib/axiosClient"; // ✅ updated
 import { saveAs } from "file-saver";
 
 export interface Admin {
@@ -52,14 +53,14 @@ export default function AMallAdmins() {
   const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
   const currentData = filteredAdmins.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const isSuperAdmin = true; // Replace with actual logic later
+  const isSuperAdmin = true;
 
   useEffect(() => {
     const fetchAdmins = async () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:8080/api/admin/admins", {
+        const res = await axiosClient.get("/api/admin/admins", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

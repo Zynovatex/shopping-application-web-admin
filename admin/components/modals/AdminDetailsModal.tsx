@@ -96,12 +96,14 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
         <div className="fixed inset-0 bg-black/25" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="w-full max-w-2xl rounded-2xl bg-white shadow-xl p-6">
+            {/* Close Button */}
             <div className="flex justify-end">
               <button onClick={onClose} className="text-gray-500 hover:text-gray-800">
                 <X size={20} />
               </button>
             </div>
 
+            {/* Header Info */}
             <div className="flex items-center gap-4">
               <Image
                 src={admin.photo}
@@ -127,6 +129,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
               </div>
             </div>
 
+            {/* Details */}
             <div className="grid grid-cols-2 gap-4 mt-6 text-sm">
               <div>
                 <p className="text-gray-500">Role</p>
@@ -160,10 +163,12 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
                   </span>
                 )}
               </div>
+
               <div>
                 <p className="text-gray-500">Last Login</p>
                 <p className="font-medium">{updatedAdmin.lastLogin}</p>
               </div>
+
               <div>
                 <p className="text-gray-500">Categories</p>
                 {isEditing ? (
@@ -194,6 +199,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
               </div>
             </div>
 
+            {/* Footer Buttons */}
             {isSuperAdmin && (
               <div className="mt-6 flex justify-between items-center">
                 <button
@@ -214,6 +220,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
         </div>
       </Dialog>
 
+      {/* Confirm Reset Password */}
       <ConfirmPasswordDialog
         isOpen={isPasswordDialogOpen}
         onClose={() => setIsPasswordDialogOpen(false)}

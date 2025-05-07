@@ -1,7 +1,8 @@
+// 📄 File: components/AdminManagement/AMadminLogs.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "@/lib/axiosClient"; // ✅ updated import
 import TableSearch from "@/components/ui/TableSearch";
 import Pagination from "@/components/ui/Pagination";
 import Table from "@/components/common/Table";
@@ -21,7 +22,6 @@ type AdminLog = {
   timestamp: string;
 };
 
-// Column type
 type Column = {
   header: string;
   accessor: string;
@@ -47,7 +47,7 @@ export default function AMadminLogs() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const itemsPerPage = 10;
-  const useMock = true;
+  const useMock = false; // Change to true to use mock data
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -57,7 +57,7 @@ export default function AMadminLogs() {
       } else {
         try {
           const token = localStorage.getItem("token");
-          const response = await axios.get("http://localhost:8080/api/admin/logs", {
+          const response = await axiosClient.get("/api/admin/logs", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -77,9 +77,10 @@ export default function AMadminLogs() {
 
     if (searchTerm) {
       const lowerSearch = searchTerm.toLowerCase();
-      filtered = filtered.filter((log) =>
-        log.adminName.toLowerCase().includes(lowerSearch) ||
-        log.adminId.toLowerCase().includes(lowerSearch)
+      filtered = filtered.filter(
+        (log) =>
+          log.adminName.toLowerCase().includes(lowerSearch) ||
+          log.adminId.toLowerCase().includes(lowerSearch)
       );
     }
 
@@ -107,7 +108,15 @@ export default function AMadminLogs() {
   };
 
   const handleExport = () => {
-    const headers = ["Admin ID", "Admin Name", "Action", "Target", "Target ID", "Description", "Timestamp"];
+    const headers = [
+      "Admin ID",
+      "Admin Name",
+      "Action",
+      "Target",
+      "Target ID",
+      "Description",
+      "Timestamp",
+    ];
     const rows = filteredLogs.map((log) => [
       log.adminId,
       log.adminName,
@@ -117,14 +126,16 @@ export default function AMadminLogs() {
       log.description,
       log.timestamp,
     ]);
-
     const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "admin_logs.csv");
   };
 
   const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
-  const currentData = filteredLogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const currentData = filteredLogs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleRowClick = (log: AdminLog) => {
     setSelectedLog(log);
@@ -170,11 +181,7 @@ export default function AMadminLogs() {
 
       <Table<AdminLog> columns={columns} data={currentData} renderRow={renderRow} />
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       {/* Log Detail Modal */}
       <AdminLogDetailsModal

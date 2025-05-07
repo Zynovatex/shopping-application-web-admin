@@ -1,3 +1,4 @@
+// 📄 File: components/AdminManagement/AMoverview.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,7 +6,7 @@ import StatCard from "../common/StatCard";
 import AMlineChart from "./AMlineChart";
 import AMbarChart from "./AMbarChart";
 import AMpieChart from "./AMpieChart";
-import axios from "axios";
+import axiosClient from "@/lib/axiosClient"; // ✅ updated
 
 const iconUrls = [
   "/statcart-icon-1.png",
@@ -86,7 +87,7 @@ const AMoverview = () => {
           setOverviewData(mockOverviewData);
         } else {
           const token = localStorage.getItem("token");
-          const res = await axios.get("http://localhost:8080/api/admin/overview", {
+          const res = await axiosClient.get("/api/admin/overview-data", {
             headers: {
               Authorization: `Bearer ${token}`,
             },

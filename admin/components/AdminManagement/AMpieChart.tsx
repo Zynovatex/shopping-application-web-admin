@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import axios from "axios";
+import axiosClient from "@/lib/axiosClient";
 
 interface ChartData {
   name: string;
