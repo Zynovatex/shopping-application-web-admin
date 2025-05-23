@@ -8,15 +8,17 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className='p-2 flex items-center justify-between text-gray-500'>
+    <div className="p-2 flex items-center justify-between text-gray-500">
+      {/* Prev Button */}
       <button
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
-        className="py-2 px-4 rounded-md bg-[#F5F2FF] text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed border-1 border-gray-400"
+        className="py-2 px-4 rounded-md bg-[#F5F2FF] text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed border border-gray-400"
       >
         Prev
       </button>
 
+      {/* Page Number Buttons */}
       <div className="flex items-center gap-2 text-sm">
         {pages.map((page) => (
           <button
@@ -31,10 +33,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
         ))}
       </div>
 
+      {/* Next Button */}
       <button
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
-        className="py-2 px-4 rounded-md bg-[#F5F2FF] text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed border-1 border-gray-400"
+        className="py-2 px-4 rounded-md bg-[#F5F2FF] text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed border border-gray-400"
       >
         Next
       </button>

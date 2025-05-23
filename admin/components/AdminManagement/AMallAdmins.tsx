@@ -1,4 +1,3 @@
-// 📄 File: components/AdminManagement/AMallAdmins.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -8,9 +7,10 @@ import Pagination from "@/components/ui/Pagination";
 import Table from "@/components/common/Table";
 import AdminDetailsModal from "@/components/modals/AdminDetailsModal";
 import { useLoading } from "../../context/LoadingContext";
-import axiosClient from "@/lib/axiosClient"; // ✅ updated
+import axiosClient from "@/lib/axiosClient";
 import { saveAs } from "file-saver";
 
+/** Admin type definition */
 export interface Admin {
   id: number;
   adminId: string;
@@ -23,12 +23,14 @@ export interface Admin {
   categories: string[];
 }
 
+/** Table column type */
 type Column = {
   header: string;
   accessor: string;
   className?: string;
 };
 
+/** Table columns configuration */
 const columns: Column[] = [
   { header: "Info", accessor: "info" },
   { header: "Email", accessor: "email", className: "hidden md:table-cell" },
@@ -39,6 +41,10 @@ const columns: Column[] = [
   { header: "Actions", accessor: "actions" },
 ];
 
+/**
+ * AMallAdmins component
+ * Displays list of all admins with search, filters, pagination, and detail modal
+ */
 export default function AMallAdmins() {
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [filteredAdmins, setFilteredAdmins] = useState<Admin[]>([]);
@@ -51,10 +57,14 @@ export default function AMallAdmins() {
 
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
-  const currentData = filteredAdmins.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const currentData = filteredAdmins.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const isSuperAdmin = true;
 
+  /** Fetch admin data from backend or mock */
   useEffect(() => {
     const fetchAdmins = async () => {
       try {
@@ -77,14 +87,16 @@ export default function AMallAdmins() {
     fetchAdmins();
   }, [setLoading]);
 
+  /** Filter admins on search term or filters */
   useEffect(() => {
     let filtered = admins;
 
     if (searchTerm) {
       const lowerSearch = searchTerm.toLowerCase();
-      filtered = filtered.filter((admin) =>
-        admin.name.toLowerCase().includes(lowerSearch) ||
-        admin.email.toLowerCase().includes(lowerSearch)
+      filtered = filtered.filter(
+        (admin) =>
+          admin.name.toLowerCase().includes(lowerSearch) ||
+          admin.email.toLowerCase().includes(lowerSearch)
       );
     }
 
@@ -102,6 +114,7 @@ export default function AMallAdmins() {
     setCurrentPage(1);
   }, [searchTerm, filters, admins]);
 
+  /** Export filtered admins data as CSV */
   const exportToCSV = () => {
     const headers = ["Admin ID", "Name", "Email", "Role", "Categories", "Status", "Last Login"];
     const rows = filteredAdmins.map((admin) => [
@@ -119,21 +132,20 @@ export default function AMallAdmins() {
     saveAs(blob, "admins.csv");
   };
 
+  /** Render each admin row */
   const renderRow = (item: Admin) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4">
-        <div className="flex gap-2 items-center">
-          <Image
-            src={item.photo}
-            alt={item.name}
-            width={40}
-            height={40}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-          <div className="flex flex-col">
-            <p className="text-xs text-gray-500">{item.adminId}</p>
-            <h3 className="font-semibold text-sm">{item.name}</h3>
-          </div>
+        <Image
+          src={item.photo}
+          alt={item.name}
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-full object-cover"
+        />
+        <div className="flex flex-col">
+          <p className="text-xs text-gray-500">{item.adminId}</p>
+          <h3 className="font-semibold text-sm">{item.name}</h3>
         </div>
       </td>
       <td className="hidden md:table-cell text-sm">{item.email}</td>
@@ -141,7 +153,10 @@ export default function AMallAdmins() {
       <td className="hidden md:table-cell text-sm">
         <div className="flex flex-wrap gap-1">
           {item.categories.map((cat, index) => (
-            <span key={index} className="px-2 py-1 rounded-full bg-[#F0F0F0] text-xs text-gray-600">
+            <span
+              key={index}
+              className="px-2 py-1 rounded-full bg-[#F0F0F0] text-xs text-gray-600"
+            >
               {cat}
             </span>
           ))}
@@ -198,7 +213,11 @@ export default function AMallAdmins() {
 
       <Table<Admin> columns={columns} data={currentData} renderRow={renderRow} />
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       {selectedAdmin && (
         <AdminDetailsModal

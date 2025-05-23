@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import SellerOverview from "@/components/Sellers/SellerOverview";
@@ -50,8 +51,8 @@ export default function SellerPage() {
   return (
     <div>
       <span className="text-2xl font-bold m-5">Seller Management</span>
+
       <div className="w-full flex flex-col items-center">
-        {/* Tabs */}
         <div className="relative w-fit border-b border-gray-200">
           <div className="flex space-x-6">
             {tabs.map((tab) => (
@@ -77,7 +78,6 @@ export default function SellerPage() {
           </div>
         </div>
 
-        {/* Tab Content */}
         <div className="p-6 w-full">
           {activeTab === "overview" && <SellerOverview />}
           {activeTab === "all-sellers" && <AllSellers />}
@@ -90,16 +90,43 @@ export default function SellerPage() {
 
 function AllSellers() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 15;
 
-  const totalPages = Math.ceil(allShopData.length / itemsPerPage);
-  const currentData = allShopData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  // Filter shops by searchTerm (name or category)
+  const filteredData = allShopData.filter(
+    (shop) =>
+      shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
 
   const renderRow = (item: AllShops) => (
-    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]"
+    >
       <td className="flex items-center gap-4 p-4">
-        <Image src={item.photo} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
-        <div><h3 className="font-semibold text-sm">{item.name}</h3></div>
+        <Image
+          src={item.photo}
+          alt={item.name}
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-full object-cover"
+        />
+        <div>
+          <h3 className="font-semibold text-sm">{item.name}</h3>
+        </div>
       </td>
       <td className="hidden md:table-cell text-sm">{item.category}</td>
       <td className="hidden md:table-cell text-sm">{item.address}</td>
@@ -121,7 +148,7 @@ function AllSellers() {
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">All Shops</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch onSearch={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
               <Image src="/filter.png" alt="filter" width={14} height={14} />
@@ -142,17 +169,45 @@ function AllSellers() {
 
 function PendingApprovals() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 15;
 
-  const pendingData = allShopData.filter((shop) => !shop.verified); // ✅ Only unverified shops
-  const totalPages = Math.ceil(pendingData.length / itemsPerPage);
-  const currentData = pendingData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const pendingData = allShopData.filter((shop) => !shop.verified);
+
+  // Filter pending by search term (name or category)
+  const filteredData = pendingData.filter(
+    (shop) =>
+      shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
 
   const renderRow2 = (item: AllShops) => (
-    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]"
+    >
       <td className="flex items-center gap-4 p-4">
-        <Image src={item.photo} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
-        <div><h3 className="font-semibold text-sm">{item.name}</h3></div>
+        <Image
+          src={item.photo}
+          alt={item.name}
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-full object-cover"
+        />
+        <div>
+          <h3 className="font-semibold text-sm">{item.name}</h3>
+        </div>
       </td>
       <td className="hidden md:table-cell text-sm">{item.category}</td>
       <td className="hidden md:table-cell text-sm">{item.address}</td>
@@ -177,7 +232,7 @@ function PendingApprovals() {
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">Pending Approvals</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch onSearch={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
               <Image src="/filter.png" alt="filter" width={14} height={14} />

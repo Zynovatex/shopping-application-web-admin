@@ -9,6 +9,10 @@ interface StatCardProps {
   isPositive: boolean;
 }
 
+/**
+ * StatCard component
+ * Displays a statistical card with icon, title, value, and optional trend info
+ */
 const StatCard: React.FC<StatCardProps> = ({
   iconUrl,
   title,
@@ -17,10 +21,12 @@ const StatCard: React.FC<StatCardProps> = ({
   status,
   isPositive,
 }) => {
-  const showTrend = statusChange && status; // Only show arrow and text if both exist
+  // Show trend section only if statusChange and status texts exist
+  const showTrend = statusChange && status;
 
   return (
     <div className="flex md:flex-1 sm:flex-1 flex-col p-5 min-w-[160px] rounded-xl border border-gray-200 shadow-md hover:shadow-lg bg-white">
+      {/* Icon and title */}
       <div className="flex items-center space-x-2">
         {iconUrl ? (
           <Image
@@ -36,8 +42,10 @@ const StatCard: React.FC<StatCardProps> = ({
         <h3 className="text-gray-500 text-[13px]">{title}</h3>
       </div>
 
+      {/* Value */}
       <h2 className="text-2xl font-semibold mt-2">{value}</h2>
 
+      {/* Trend: arrow icon, status change, and description */}
       {showTrend && (
         <div className="flex items-center text-xs mt-3">
           <Image

@@ -3,16 +3,58 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import axiosClient from "@/lib/axiosClient"; // ✅ Updated
+import axiosClient from "@/lib/axiosClient";
 import { User, Settings, LogOut } from "lucide-react";
 import Notification from "./NotificationIcon";
 import NotificationPanel from "../panels/NotificationPanel";
 import { subDays, isAfter } from "date-fns";
 
-const allNotifications = [
-  { id: 1, message: "New shop registration pending approval.", createdAt: new Date() },
-  { id: 2, message: "A seller updated their shop info.", createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5) },
-  { id: 3, message: "Shop description modified.", createdAt: new Date(Date.now() - 1000 * 60 * 60 * 50) },
+type NotificationSource = "seller" | "buyer" | "system";
+
+interface NotificationItem {
+  id: number;
+  message: string;
+  createdAt: Date;
+  source: NotificationSource;
+}
+
+const allNotifications: NotificationItem[] = [
+  {
+    id: 1,
+    message: "New shop registration pending approval.",
+    createdAt: new Date(),
+    source: "seller",
+  },
+  {
+    id: 2,
+    message: "A customer submitted a refund request.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 30),
+    source: "buyer",
+  },
+  {
+    id: 3,
+    message: "Platform maintenance scheduled at midnight.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3),
+    source: "system",
+  },
+  {
+    id: 4,
+    message: "Seller updated their product pricing.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12),
+    source: "seller",
+  },
+  {
+    id: 5,
+    message: "New buyer account created.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24),
+    source: "buyer",
+  },
+  {
+    id: 6,
+    message: "Security policy updated by system admin.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48),
+    source: "system",
+  },
 ];
 
 const Navbar = () => {
@@ -80,15 +122,17 @@ const Navbar = () => {
 
       {/* Right Section */}
       <div className="flex items-center gap-6 justify-end w-full">
+        {/* ✅ Message Icon with navigation */}
         <div
           className="bg-white rounded-full w-7 h-7 flex justify-center items-center cursor-pointer hover:bg-gray-100 transition duration-150"
           role="button"
           aria-label="Messages"
+          onClick={() => router.push("/messages")}
         >
           <Image src="/message.png" alt="Messages" width={20} height={20} />
         </div>
 
-        {/* Notification Icon + Panel */}
+        {/* Notification Icon */}
         <div ref={notificationRef} className="relative">
           <Notification
             iconSrc="/announcement.png"
@@ -116,7 +160,7 @@ const Navbar = () => {
           </span>
         </div>
 
-        {/* Avatar + Dropdown */}
+        {/* Avatar Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <Image
             src="/avatar.png"
@@ -138,16 +182,6 @@ const Navbar = () => {
                 <User size={16} />
                 Profile
               </button>
-              {/* <button
-                onClick={() => {
-                  setDropdownOpen(false);
-                  router.push("/admin/settings");
-                }}
-                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all"
-              >
-                <Settings size={16} />
-                Settings
-              </button> */}
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-500 hover:bg-red-100 transition-all"

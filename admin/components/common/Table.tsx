@@ -1,17 +1,23 @@
 import React from "react";
 
+/** Column definition type */
 type Column = {
   header: string;
   accessor: string;
   className?: string;
 };
 
+/** Props for generic Table component */
 type TableProps<T> = {
   columns: Column[];
   renderRow: (item: T) => React.ReactNode;
   data: T[];
 };
 
+/**
+ * Generic Table component
+ * Renders a table with dynamic columns and row rendering
+ */
 const Table = <T,>({ columns, renderRow, data }: TableProps<T>) => {
   return (
     <table className="w-full mt-4">

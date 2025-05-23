@@ -1,14 +1,21 @@
 "use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
+
 import AMoverview from "@/components/AdminManagement/AMoverview";
 import AMallAdmins from "@/components/AdminManagement/AMallAdmins";
 import AMcreateAdmin from "@/components/AdminManagement/AMcreateAdmin";
 import AMadminLogs from "@/components/AdminManagement/AMadminlogs";
 
+/**
+ * AdminManagement component
+ * Handles tab navigation and rendering of admin management subsections
+ */
 export default function AdminManagement() {
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Tab definitions with ids and labels
   const tabs = [
     { id: "overview", label: "Overview" },
     { id: "all-admins", label: "All Admins" },
@@ -18,7 +25,9 @@ export default function AdminManagement() {
 
   return (
     <div>
+      {/* Page Title */}
       <span className="text-2xl font-bold m-5">Admin Management</span>
+
       <div className="w-full flex flex-col items-center">
         {/* Tab Navigation */}
         <div className="relative w-fit border-b border-gray-200">
@@ -32,6 +41,8 @@ export default function AdminManagement() {
                 }`}
               >
                 {tab.label}
+
+                {/* Animated underline indicator for active tab */}
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="active-tab-indicator"

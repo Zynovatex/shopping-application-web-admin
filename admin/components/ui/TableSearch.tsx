@@ -27,6 +27,7 @@ const TableSearch = ({
   const [showFilters, setShowFilters] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
+  // Toggle checkbox filter for a given group and value
   const handleCheckboxToggle = (group: string, value: string) => {
     const currentGroup = activeFilters[group] || [];
     const updatedGroup = currentGroup.includes(value)
@@ -42,13 +43,14 @@ const TableSearch = ({
     onFilterChange?.(newFilters);
   };
 
+  // Clear search and all filters
   const handleClear = () => {
     setSearchTerm("");
     setActiveFilters({});
     onClear?.();
   };
 
-  // Close filter panel on outside click
+  // Close filter panel when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
@@ -82,6 +84,7 @@ const TableSearch = ({
           <button
             className="w-8 h-8 rounded-full bg-[#5A31F5] flex items-center justify-center"
             onClick={() => setShowFilters((prev) => !prev)}
+            aria-label="Toggle filters"
           >
             <Image src="/filter.png" alt="filter" width={14} height={14} />
           </button>
@@ -90,6 +93,7 @@ const TableSearch = ({
           <button
             className="w-8 h-8 rounded-full bg-[#5A31F5] flex items-center justify-center"
             onClick={onExport}
+            aria-label="Export data"
           >
             <Image src="/sort.png" alt="export" width={14} height={14} />
           </button>
@@ -107,11 +111,12 @@ const TableSearch = ({
               <div key={group} className="mb-3">
                 <p className="font-semibold text-sm capitalize mb-1">{group}</p>
                 {filterOptions[group].map((item) => (
-                  <label key={item} className="flex items-center gap-2 text-sm">
+                  <label key={item} className="flex items-center gap-2 text-sm cursor-pointer">
                     <input
                       type="checkbox"
                       checked={activeFilters[group]?.includes(item) || false}
                       onChange={() => handleCheckboxToggle(group, item)}
+                      className="cursor-pointer"
                     />
                     {item}
                   </label>

@@ -1,4 +1,3 @@
-// 📄 File: components/AdminManagement/AMoverview.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,21 +5,24 @@ import StatCard from "../common/StatCard";
 import AMlineChart from "./AMlineChart";
 import AMbarChart from "./AMbarChart";
 import AMpieChart from "./AMpieChart";
-import axiosClient from "@/lib/axiosClient"; // ✅ updated
+import axiosClient from "@/lib/axiosClient"; // Axios instance
 
+// Icon URLs for stat cards
 const iconUrls = [
-  "/statcart-icon-1.png",
-  "/statcart-icon-2.png",
-  "/statcart-icon-3.png",
-  "/statcart-icon-4.png",
+  "/statcart-total-admin-icon.png",
+  "/statcart-active-admin-icon.png",
+  "/statcart-last-7-days-activity-icon.png",
+  "/statcart-pending-invites-icon.png",
 ];
 
-const USE_MOCK = false; // Toggle: true = mock, false = live
+// Toggle to switch between mock data and live API
+const USE_MOCK = false;
 
+// Mock data for overview stats and charts
 const mockOverviewData = {
   stats: [
     {
-      iconUrl: "/statcart-icon-1.png",
+      iconUrl: "/statcart-total-admin-icon.png",
       title: "Mock Total Admins",
       value: "5,432",
       statusChange: "↑ 3.5%",
@@ -28,7 +30,7 @@ const mockOverviewData = {
       isPositive: true,
     },
     {
-      iconUrl: "/statcart-icon-2.png",
+      iconUrl: "statcart-active-admin-icon.png",
       title: "Mock Active Admins",
       value: "3,210",
       statusChange: "↓ 1.2%",
@@ -36,7 +38,7 @@ const mockOverviewData = {
       isPositive: false,
     },
     {
-      iconUrl: "/statcart-icon-3.png",
+      iconUrl: "statcart-last-7-days-activity-icon.png",
       title: "Mock 7 Days Activity",
       value: "120",
       statusChange: "↑ 0.8%",
@@ -44,7 +46,7 @@ const mockOverviewData = {
       isPositive: true,
     },
     {
-      iconUrl: "/statcart-icon-4.png",
+      iconUrl: "statcart-pending-invites-icon.png",
       title: "Mock Pending Invites",
       value: "89",
       statusChange: "",
@@ -76,6 +78,10 @@ const mockOverviewData = {
   ],
 };
 
+/**
+ * AMoverview component
+ * Displays admin overview statistics and charts
+ */
 const AMoverview = () => {
   const [overviewData, setOverviewData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -93,11 +99,22 @@ const AMoverview = () => {
             },
           });
 
+          // Enhance stats with icon and status info
           const updatedStats = res.data.stats.map((stat: any, i: number) => ({
             ...stat,
             iconUrl: iconUrls[i] || "/default-icon.png",
-            statusChange: i === 3 ? "" : i % 2 === 0 ? "↑ 8.6%" : "↓ 8.6%",
-            status: i === 3 ? "" : i === 2 ? "Compared to last 7 days" : "Compared to last year",
+            statusChange:
+              i === 3
+                ? ""
+                : i % 2 === 0
+                ? "↑ 8.6%"
+                : "↓ 8.6%",
+            status:
+              i === 3
+                ? ""
+                : i === 2
+                ? "Compared to last 7 days"
+                : "Compared to last year",
             isPositive: i === 3 ? false : i % 2 === 0,
           }));
 
@@ -117,18 +134,19 @@ const AMoverview = () => {
     fetchData();
   }, []);
 
-  if (loading || !overviewData) return <p className="text-center p-8">Loading...</p>;
+  if (loading || !overviewData)
+    return <p className="text-center p-8">Loading...</p>;
 
   return (
     <div className="w-full h-full flex flex-col gap-4 items-center">
-      {/* STAT CARDS */}
+      {/* Stat cards */}
       <div className="w-full flex gap-4 justify-between flex-wrap">
         {overviewData.stats.map((stat: any, index: number) => (
           <StatCard key={index} {...stat} />
         ))}
       </div>
 
-      {/* CHARTS SECTION */}
+      {/* Charts section */}
       <div className="flex flex-col lg:flex-row w-full gap-6 my-4">
         <div className="flex-1 min-w-0">
           <AMlineChart data={overviewData.activityTrend ?? []} />

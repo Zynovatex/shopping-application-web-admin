@@ -1,4 +1,3 @@
-// 📄 File: components/AdminManagement/AdminLogDetailsModal.tsx
 "use client";
 
 import React from "react";
@@ -6,7 +5,7 @@ import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 import { jsPDF } from "jspdf";
 
-// Type
+/** Type representing an admin log entry */
 interface AdminLog {
   id: number;
   adminId: string;
@@ -18,15 +17,20 @@ interface AdminLog {
   timestamp: string;
 }
 
+/** Props for AdminLogDetailsModal component */
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   log: AdminLog | null;
 }
 
+/**
+ * Modal component to display detailed admin log info and export as PDF
+ */
 const AdminLogDetailsModal: React.FC<Props> = ({ isOpen, onClose, log }) => {
   if (!log) return null;
 
+  /** Generates and downloads the PDF file for the log details */
   const handleExportPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(14);
@@ -44,9 +48,13 @@ const AdminLogDetailsModal: React.FC<Props> = ({ isOpen, onClose, log }) => {
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+      {/* Background overlay */}
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+
+      {/* Modal panel */}
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="w-full max-w-md rounded-2xl bg-white shadow-xl p-6">
+          {/* Header with title and close button */}
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold">Log Details</h3>
             <button onClick={onClose} className="text-gray-500 hover:text-black">
@@ -54,6 +62,7 @@ const AdminLogDetailsModal: React.FC<Props> = ({ isOpen, onClose, log }) => {
             </button>
           </div>
 
+          {/* Log details */}
           <div className="text-sm space-y-2">
             <p><strong>Admin ID:</strong> {log.adminId}</p>
             <p><strong>Admin Name:</strong> {log.adminName}</p>
@@ -64,6 +73,7 @@ const AdminLogDetailsModal: React.FC<Props> = ({ isOpen, onClose, log }) => {
             <p><strong>Timestamp:</strong> {log.timestamp}</p>
           </div>
 
+          {/* Export PDF button */}
           <div className="mt-6 text-right">
             <button
               className="bg-[#5A31F5] text-white px-4 py-2 rounded-lg hover:bg-[#4827C4]"

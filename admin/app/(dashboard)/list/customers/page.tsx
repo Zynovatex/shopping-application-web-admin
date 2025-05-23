@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import CustomerOverview from "@/components/Customer/CustomerOverview";
@@ -9,6 +10,7 @@ import Table from "@/components/common/Table";
 import Link from "next/link";
 import { allCustomerData } from "@/lib/data";
 
+/** Customer data type */
 type Customer = {
   id: number;
   customerId: string;
@@ -21,12 +23,14 @@ type Customer = {
   totalAmount: string;
 };
 
+/** Column definition type */
 type Column = {
   header: string;
   accessor: string;
   className?: string;
 };
 
+/** Table columns configuration */
 const columns: Column[] = [
   { header: "Info", accessor: "info" },
   { header: "Address", accessor: "address", className: "hidden md:table-cell" },
@@ -37,6 +41,9 @@ const columns: Column[] = [
   { header: "Actions", accessor: "actions" },
 ];
 
+/**
+ * Main component handling Customer Management page with tabs and content
+ */
 export default function CustomerManagement() {
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -45,8 +52,12 @@ export default function CustomerManagement() {
     { id: "all-customers", label: "All Customers" },
   ];
 
+  /** Renders a single customer row for the table */
   const renderRow = (item: Customer) => (
-    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]"
+    >
       <td className="flex items-center gap-4 p-4">
         <div className="flex gap-2 items-center">
           <Image
@@ -81,9 +92,11 @@ export default function CustomerManagement() {
 
   return (
     <div>
+      {/* Page title */}
       <span className="text-2xl font-bold m-5">Customer Management</span>
+
       <div className="w-full flex flex-col items-center">
-        {/* Tabs */}
+        {/* Tabs navigation */}
         <div className="relative w-fit border-b border-gray-200">
           <div className="flex space-x-6">
             {tabs.map((tab) => (
@@ -109,7 +122,7 @@ export default function CustomerManagement() {
           </div>
         </div>
 
-        {/* Tab Content */}
+        {/* Tab content area */}
         <div className="p-6 w-full">
           {activeTab === "overview" && <Overview />}
           {activeTab === "all-customers" && (
@@ -121,6 +134,7 @@ export default function CustomerManagement() {
   );
 }
 
+/** Overview tab content */
 function Overview() {
   return (
     <div className="text-lg font-semibold">
@@ -129,6 +143,7 @@ function Overview() {
   );
 }
 
+/** All Customers tab content */
 function AllCustomers({
   columns,
   renderRow,
@@ -137,21 +152,35 @@ function AllCustomers({
   renderRow: (item: Customer) => React.ReactNode;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(allCustomerData.length / itemsPerPage);
-  const currentData = allCustomerData.slice(
+  // Filter customers based on search term on name or customerId
+  const filteredData = allCustomerData.filter(
+    (customer) =>
+      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.customerId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  /** Handles search input changes */
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset to first page on new search
+  };
+
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
-      {/* TOP */}
+      {/* Header */}
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">All Customers</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch onSearch={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
               <Image src="/filter.png" alt="filter" width={14} height={14} />
@@ -163,15 +192,15 @@ function AllCustomers({
         </div>
       </div>
 
-      {/* TABLE LIST */}
-      <Table<Customer>
-        columns={columns}
-        data={currentData}
-        renderRow={renderRow}
-      />
+      {/* Customer Table */}
+      <Table<Customer> columns={columns} data={currentData} renderRow={renderRow} />
 
-      {/* PAGINATION */}
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+      {/* Pagination Controls */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

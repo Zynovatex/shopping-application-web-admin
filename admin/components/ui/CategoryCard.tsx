@@ -7,7 +7,10 @@ interface CategoryCardProps {
 
 const CategoryCard: React.FC<CategoryCardProps> = ({ iconUrl, category }) => {
   return (
-    <div className="p-4 rounded-xl border border-gray-200 shadow-md hover:shadow-lg bg-white w-full min-h-[100px] transition duration-200 hover:scale-[1.02]">
+    <div
+      className="p-4 rounded-xl border border-gray-200 shadow-md hover:shadow-lg 
+                 bg-white w-full min-h-[100px] transition duration-200 hover:scale-[1.02]"
+    >
       <div className="flex items-center gap-4">
         <Image
           src={iconUrl}

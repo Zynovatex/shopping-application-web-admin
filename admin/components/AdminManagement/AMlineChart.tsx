@@ -4,6 +4,7 @@ import Image from "next/image";
 import * as React from "react";
 import { LineChart, Line, XAxis, ResponsiveContainer } from "recharts";
 
+/** Data type for admin activity trend */
 interface ActivityTrendData {
   name: string;
   total: number;
@@ -11,32 +12,56 @@ interface ActivityTrendData {
   pending: number;
 }
 
+/**
+ * AMlineChart component
+ * Shows a line chart with admin activity trend: total, active, pending
+ */
 const AMlineChart = ({ data }: { data: ActivityTrendData[] }) => {
-  const lastItem = data && data.length > 0 
-    ? data[data.length - 1] 
-    : { total: 0, active: 0, pending: 0 };
+  // Safely get last item or defaults if no data
+  const lastItem =
+    data && data.length > 0
+      ? data[data.length - 1]
+      : { total: 0, active: 0, pending: 0 };
 
   return (
     <div className="bg-white rounded-xl w-full h-[450px] p-4 border border-gray-200 shadow-md hover:shadow-lg flex flex-col">
-      {/* TITLE */}
+      {/* Title section */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="capitalize text-base font-semibold">Admin Activity Trend</h1>
         <Image src="/moreDark.png" alt="icon" width={20} height={20} />
       </div>
 
-      {/* CHART CONTAINER */}
+      {/* Chart container filling available space */}
       <div className="flex-1 w-full h-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <Line type="monotone" dataKey="total" stroke="#7BADFF" strokeWidth={2} />
-            <Line type="monotone" dataKey="active" stroke="#106BFF" strokeWidth={2} />
-            <Line type="monotone" dataKey="pending" stroke="#B1B1B1" strokeWidth={2} />
-            <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#6B7280" }} />
+            <Line
+              type="monotone"
+              dataKey="total"
+              stroke="#7BADFF"
+              strokeWidth={2}
+            />
+            <Line
+              type="monotone"
+              dataKey="active"
+              stroke="#106BFF"
+              strokeWidth={2}
+            />
+            <Line
+              type="monotone"
+              dataKey="pending"
+              stroke="#B1B1B1"
+              strokeWidth={2}
+            />
+            <XAxis
+              dataKey="name"
+              tick={{ fontSize: 12, fill: "#6B7280" }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      {/* LEGEND */}
+      {/* Legend displaying last data points */}
       <div className="flex justify-center items-center gap-12 mt-2">
         {/* Total Admins */}
         <div className="flex flex-col items-center space-y-1">

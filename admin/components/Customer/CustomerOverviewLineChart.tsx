@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// ✅ Differentiated customer counts for each day
+// Sample data showing customer online counts by time and day
 const data = [
   { time: "8 AM", Monday: 10, Tuesday: 15, Wednesday: 20, Thursday: 25, Friday: 30, Saturday: 35, Sunday: 40 },
   { time: "10 AM", Monday: 30, Tuesday: 25, Wednesday: 35, Thursday: 30, Friday: 50, Saturday: 60, Sunday: 55 },
@@ -21,17 +21,22 @@ const data = [
   { time: "8 PM", Monday: 70, Tuesday: 65, Wednesday: 78, Thursday: 92, Friday: 100, Saturday: 110, Sunday: 105 },
 ];
 
+/**
+ * CustomerOverviewLineChart component
+ * Displays line chart of customer online counts across days of the week
+ */
 const CustomerOverviewLineChart = () => {
   return (
     <div className="bg-white rounded-xl w-full h-[600px] p-4 border border-gray-200 shadow-md hover:shadow-lg flex flex-col">
-      
-      {/* TITLE */}
+      {/* Title */}
       <div className="flex justify-between items-center mb-4">
-        <h1 className="capitalize text-base font-semibold">Customer Online Time (Full Week)</h1>
+        <h1 className="capitalize text-base font-semibold">
+          Customer Online Time (Full Week)
+        </h1>
         <Image src="/moreDark.png" alt="icon" width={20} height={20} />
       </div>
 
-      {/* CHART CONTAINER */}
+      {/* Chart container */}
       <div className="flex-1 w-full h-full">
         <ResponsiveContainer width="100%" height="90%">
           <LineChart data={data}>
@@ -47,7 +52,7 @@ const CustomerOverviewLineChart = () => {
             <YAxis tick={{ fontSize: 12 }} />
 
             <Tooltip />
-            <Legend wrapperStyle={{ fontSize: '14px' }} />
+            <Legend wrapperStyle={{ fontSize: "14px" }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

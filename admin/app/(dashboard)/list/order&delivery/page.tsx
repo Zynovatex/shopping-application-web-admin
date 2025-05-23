@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import TableSearch from "@/components/ui/TableSearch";
@@ -9,6 +10,7 @@ import Table from "@/components/common/Table";
 import Link from "next/link";
 import { allDeliveryData, allOrderData } from "@/lib/data";
 
+/** Type for Order details */
 type OrderDetails = {
   id: number;
   info: string;
@@ -19,6 +21,7 @@ type OrderDetails = {
   deliveryPerson: string;
 };
 
+/** Type for Delivery details */
 type DeliveryDetails = {
   id: number;
   personId: string;
@@ -30,12 +33,14 @@ type DeliveryDetails = {
   ratings: number;
 };
 
+/** Column type */
 type Column = {
   header: string;
   accessor: string;
   className?: string;
 };
 
+/** Columns for Order Details Table */
 const columns: Column[] = [
   { header: "Info", accessor: "info" },
   { header: "Order Id", accessor: "orderId" },
@@ -46,6 +51,7 @@ const columns: Column[] = [
   { header: "Invoice", accessor: "invoice" }
 ];
 
+/** Columns for Delivery Details Table */
 const DeliveryDetailsColumns: Column[] = [
   { header: "Info", accessor: "info" },
   { header: "Total Delivery", accessor: "totalDelivery" },
@@ -55,6 +61,9 @@ const DeliveryDetailsColumns: Column[] = [
   { header: "View Profile", accessor: "actions" }
 ];
 
+/**
+ * Main component handling tabs and content for Order & Delivery Management
+ */
 export default function OrderAndDeliveryManagement() {
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -64,6 +73,7 @@ export default function OrderAndDeliveryManagement() {
     { id: "delivery-details", label: "Delivery Details" }
   ];
 
+  /** Render row for Order Details table */
   const AllProductsRenderRow = (item: OrderDetails) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4">
@@ -86,6 +96,7 @@ export default function OrderAndDeliveryManagement() {
     </tr>
   );
 
+  /** Render row for Delivery Details table */
   const pendingProductRenderRow = (item: DeliveryDetails) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4">
@@ -117,9 +128,11 @@ export default function OrderAndDeliveryManagement() {
 
   return (
     <div>
+      {/* Page title */}
       <span className="text-2xl font-bold m-5">Order & Delivery</span>
+
       <div className="w-full flex flex-col items-center">
-        {/* Tabs */}
+        {/* Tabs navigation */}
         <div className="relative w-fit border-b border-gray-200">
           <div className="flex space-x-6">
             {tabs.map((tab) => (
@@ -131,6 +144,7 @@ export default function OrderAndDeliveryManagement() {
                 }`}
               >
                 {tab.label}
+
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="active-tab-indicator"
@@ -145,7 +159,7 @@ export default function OrderAndDeliveryManagement() {
           </div>
         </div>
 
-        {/* Tab Content */}
+        {/* Tab content */}
         <div className="p-6 w-full">
           {activeTab === "overview" && <Overview />}
           {activeTab === "Order-details" && (
@@ -163,6 +177,7 @@ export default function OrderAndDeliveryManagement() {
   );
 }
 
+/** Overview tab content */
 function Overview() {
   return (
     <div className="text-lg font-semibold">
@@ -171,65 +186,97 @@ function Overview() {
   );
 }
 
+/** Order Details tab content */
 function AllSellers({
   columns,
-  AllProductsRenderRow
+  AllProductsRenderRow,
 }: {
   columns: Column[];
   AllProductsRenderRow: (item: OrderDetails) => React.ReactNode;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(allOrderData.length / itemsPerPage);
-  const currentData = allOrderData.slice(
+  // Filter allOrderData by searchTerm (orderId and customerName)
+  const filteredData = allOrderData.filter(
+    (order) =>
+      order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // reset to first page on new search
+  };
 
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       <div className="flex items-center justify-between pb-2">
         <h1 className="text-lg font-semibold hidden md:block">Order Details</h1>
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch onSearch={handleSearch} />
         </div>
       </div>
+
       <Table columns={columns} data={currentData} renderRow={AllProductsRenderRow} />
+
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }
 
+/** Delivery Details tab content */
 function PendingApprovals({
   DeliveryDetailsColumn,
-  pendingProductRenderRow
+  pendingProductRenderRow,
 }: {
   DeliveryDetailsColumn: Column[];
   pendingProductRenderRow: (item: DeliveryDetails) => React.ReactNode;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(allDeliveryData.length / itemsPerPage);
-  const currentData = allDeliveryData.slice(
+  // Filter allDeliveryData by searchTerm (personId and info)
+  const filteredData = allDeliveryData.filter(
+    (delivery) =>
+      delivery.personId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      delivery.info.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       <div className="flex items-center justify-between pb-2">
         <h1 className="text-lg font-semibold hidden md:block">Delivery Details</h1>
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch onSearch={handleSearch} />
         </div>
       </div>
+
       <Table
         columns={DeliveryDetailsColumn}
         data={currentData}
         renderRow={pendingProductRenderRow}
       />
+
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );

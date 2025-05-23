@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import TableSearch from "@/components/ui/TableSearch";
@@ -49,7 +50,13 @@ export default function ProductPage() {
   const AllProductsRenderRow = (item: AllProducts) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4">
-        <Image src={item.photo} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-sm object-cover" />
+        <Image
+          src={item.photo}
+          alt={item.name}
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-sm object-cover"
+        />
         <div className="flex flex-col">
           <h3 className="font-semibold text-sm">{item.name}</h3>
         </div>
@@ -74,7 +81,13 @@ export default function ProductPage() {
   const pendingProductRenderRow = (item: AllProducts) => (
     <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4">
-        <Image src={item.photo} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
+        <Image
+          src={item.photo}
+          alt={item.name}
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-full object-cover"
+        />
         <div className="flex flex-col">
           <h3 className="font-semibold text-sm">{item.name}</h3>
         </div>
@@ -104,8 +117,8 @@ export default function ProductPage() {
   return (
     <div>
       <span className="text-2xl font-bold m-5">Product Management</span>
+
       <div className="w-full flex flex-col items-center">
-        {/* Tabs */}
         <div className="relative w-fit border-b border-gray-200">
           <div className="flex space-x-6">
             {tabs.map((tab) => (
@@ -131,7 +144,6 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* Tab Content */}
         <div className="p-6 w-full">
           {activeTab === "overview" && <Overview />}
           {activeTab === "all-products" && (
@@ -162,21 +174,33 @@ function AllProducts({
   AllProductsRenderRow: (item: AllProducts) => React.ReactNode;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(allProductData.length / itemsPerPage);
-  const currentData = allProductData.slice(
+  // Filter products by name or category (case insensitive)
+  const filteredData = allProductData.filter(
+    (product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
-      {/* TOP */}
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">All Products</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch onSearch={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
               <Image src="/filter.png" alt="filter" width={14} height={14} />
@@ -188,11 +212,7 @@ function AllProducts({
         </div>
       </div>
 
-      <Table<AllProducts>
-        columns={columns}
-        data={currentData}
-        renderRow={AllProductsRenderRow}
-      />
+      <Table columns={columns} data={currentData} renderRow={AllProductsRenderRow} />
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
@@ -207,22 +227,36 @@ function PendingApprovals({
   pendingProductRenderRow: (item: AllProducts) => React.ReactNode;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 10;
 
-  const pendingData = allProductData.filter(product => product.id % 2 !== 0); // Simulated pending condition
-  const totalPages = Math.ceil(pendingData.length / itemsPerPage);
-  const currentData = pendingData.slice(
+  // Example filter simulating pending items
+  const pendingData = allProductData.filter((product) => product.id % 2 !== 0);
+
+  // Further filter pending data by searchTerm on name or category
+  const filteredData = pendingData.filter(
+    (product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
-      {/* TOP */}
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">Pending Approvals</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch onSearch={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
               <Image src="/filter.png" alt="filter" width={14} height={14} />
@@ -234,11 +268,7 @@ function PendingApprovals({
         </div>
       </div>
 
-      <Table<AllProducts>
-        columns={columns}
-        data={currentData}
-        renderRow={pendingProductRenderRow}
-      />
+      <Table columns={columns} data={currentData} renderRow={pendingProductRenderRow} />
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>

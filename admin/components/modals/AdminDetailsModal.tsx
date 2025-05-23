@@ -9,6 +9,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import type { Admin } from "@/components/AdminManagement/AMallAdmins";
 
+// List of possible categories for admin permissions
 const CATEGORY_OPTIONS = [
   "Seller Mgmt",
   "Product Mgmt",
@@ -25,16 +26,29 @@ interface AdminDetailsModalProps {
   isSuperAdmin: boolean;
 }
 
+/**
+ * AdminDetailsModal component
+ * Displays admin profile details, allows editing, and password reset for super admins
+ */
 const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
   isOpen,
   onClose,
   admin,
   isSuperAdmin,
 }) => {
+  // State for controlling the password reset confirmation dialog visibility
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+
+  // Whether the modal is in edit mode (allows editing details)
   const [isEditing, setIsEditing] = useState(false);
+
+  // Local copy of admin data for editing before saving
   const [updatedAdmin, setUpdatedAdmin] = useState(admin);
 
+  /**
+   * Handles sending a reset password request to backend
+   * @param superAdminPassword - password of super admin to authorize reset
+   */
   const handleResetPassword = async (superAdminPassword: string) => {
     setIsPasswordDialogOpen(false);
     try {
@@ -59,6 +73,9 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
     }
   };
 
+  /**
+   * Saves edited admin details to backend
+   */
   const handleSaveChanges = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -82,6 +99,10 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
     }
   };
 
+  /**
+   * Toggles the category permission in the updated admin's allowed modules
+   * @param category - category to toggle
+   */
   const handleCategoryChange = (category: string) => {
     const updatedCategories = updatedAdmin.categories.includes(category)
       ? updatedAdmin.categories.filter((c) => c !== category)
@@ -92,18 +113,23 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
 
   return (
     <>
+      {/* Modal dialog for admin details */}
       <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+        {/* Overlay background */}
         <div className="fixed inset-0 bg-black/25" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="w-full max-w-2xl rounded-2xl bg-white shadow-xl p-6">
-            {/* Close Button */}
+            {/* Close button */}
             <div className="flex justify-end">
-              <button onClick={onClose} className="text-gray-500 hover:text-gray-800">
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-800"
+              >
                 <X size={20} />
               </button>
             </div>
 
-            {/* Header Info */}
+            {/* Admin header info: photo, name, email, ID */}
             <div className="flex items-center gap-4">
               <Image
                 src={admin.photo}
@@ -113,6 +139,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
                 className="w-16 h-16 rounded-full object-cover"
               />
               <div>
+                {/* Editable name input or static display */}
                 {isEditing ? (
                   <input
                     className="text-xl font-semibold border-b border-gray-300"
@@ -125,11 +152,13 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
                   <h2 className="text-xl font-semibold">{updatedAdmin.name}</h2>
                 )}
                 <p className="text-sm text-gray-500">{updatedAdmin.email}</p>
-                <p className="text-sm text-gray-400">Admin ID: {updatedAdmin.adminId}</p>
+                <p className="text-sm text-gray-400">
+                  Admin ID: {updatedAdmin.adminId}
+                </p>
               </div>
             </div>
 
-            {/* Details */}
+            {/* Admin details: Role, Status, Last Login, Categories */}
             <div className="grid grid-cols-2 gap-4 mt-6 text-sm">
               <div>
                 <p className="text-gray-500">Role</p>
@@ -137,6 +166,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
               </div>
               <div>
                 <p className="text-gray-500">Status</p>
+                {/* Editable status select or static display */}
                 {isEditing ? (
                   <select
                     className="w-full border rounded p-1"
@@ -171,6 +201,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
 
               <div>
                 <p className="text-gray-500">Categories</p>
+                {/* Editable categories checkboxes or static display */}
                 {isEditing ? (
                   <div className="grid grid-cols-2 gap-2">
                     {CATEGORY_OPTIONS.map((cat) => (
@@ -199,7 +230,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
               </div>
             </div>
 
-            {/* Footer Buttons */}
+            {/* Footer buttons (Edit / Save and Reset Password) visible only for super admins */}
             {isSuperAdmin && (
               <div className="mt-6 flex justify-between items-center">
                 <button
@@ -220,7 +251,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
         </div>
       </Dialog>
 
-      {/* Confirm Reset Password */}
+      {/* Confirm Password Dialog for resetting password */}
       <ConfirmPasswordDialog
         isOpen={isPasswordDialogOpen}
         onClose={() => setIsPasswordDialogOpen(false)}
