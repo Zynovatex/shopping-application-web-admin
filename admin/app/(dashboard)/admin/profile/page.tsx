@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import useSWR from "swr";
 import axiosClient from "@/lib/axiosClient";
 import EditAdminModal from "@/components/AdminManagement/EditAdminModal";
 
@@ -17,41 +18,31 @@ interface Admin {
   createdAt?: string;
 }
 
+// ✅ SWR fetcher with token check
+const fetchAdmin = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Token missing. User is not authenticated.");
+
+  const res = await axiosClient.get("/api/admin/me");
+  return res.data;
+};
+
 const AdminProfilePage = () => {
-  const [admin, setAdmin] = useState<Admin | null>(null);
+  const { data: admin, error, isLoading, mutate } = useSWR("/api/admin/me", fetchAdmin);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  useEffect(() => {
-    const fetchAdmin = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axiosClient.get("/api/admin/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setAdmin(res.data);
-      } catch (err) {
-        console.error("Failed to load admin profile", err);
-      }
-    };
-    fetchAdmin();
-  }, []);
-
-  if (!admin) return <p className="p-6">Loading...</p>;
+  if (isLoading) return <p className="p-6">Loading...</p>;
+  if (error || !admin) return <p className="p-6 text-red-600">Failed to load profile.</p>;
 
   const readableRole = admin.role === "ROLE_SUPER_ADMIN" ? "Super Admin" : "Admin";
   const lastLogin = admin.lastLogin ? new Date(admin.lastLogin).toLocaleString() : "N/A";
   const assignedCategories =
     admin.role === "ROLE_SUPER_ADMIN"
       ? "All Categories"
-      : admin.categories.length > 0
+      : admin.categories?.length > 0
       ? admin.categories.join(", ")
       : "None";
-
-  const createdAt = admin.createdAt
-    ? new Date(admin.createdAt).toLocaleString()
-    : "N/A";
+  const createdAt = admin.createdAt ? new Date(admin.createdAt).toLocaleString() : "N/A";
 
   return (
     <div className="p-6 flex flex-col items-center">
@@ -113,7 +104,8 @@ const AdminProfilePage = () => {
         <EditAdminModal
           admin={admin}
           onClose={() => setShowEditModal(false)}
-          hidePassword={admin.role === "ROLE_SUPER_ADMIN"} // 🔒 Password locked for super admin
+          hidePassword={admin.role === "ROLE_SUPER_ADMIN"}
+          onSave={mutate} // ✅ Re-fetch after save
         />
       )}
     </div>
