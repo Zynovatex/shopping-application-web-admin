@@ -17,15 +17,19 @@ interface Admin {
 interface Props {
   admin: Admin;
   onClose: () => void;
-  hidePassword?: boolean; // Hide password fields, e.g. for super-admins
+  hidePassword?: boolean;
+  onSave?: () => void; // ✅ New prop added
 }
 
 /**
  * EditAdminModal component
- * Modal dialog for editing admin profile and optionally changing password
  */
-const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false }) => {
-  // Form state
+const EditAdminModal: React.FC<Props> = ({
+  admin,
+  onClose,
+  hidePassword = false,
+  onSave,
+}) => {
   const [name, setName] = useState(admin.name);
   const [photo, setPhoto] = useState(admin.photo || "");
   const [showPasswordFields, setShowPasswordFields] = useState(false);
@@ -35,7 +39,6 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
   const [passwordStrength, setPasswordStrength] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /** Handle photo file input and preview */
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -43,7 +46,6 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
     setPhoto(fakeUrl);
   };
 
-  /** Update password state and evaluate strength */
   const handlePasswordChange = (val: string) => {
     setPassword(val);
     if (val.length >= 12) setPasswordStrength("Strong");
@@ -51,17 +53,14 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
     else setPasswordStrength("Weak");
   };
 
-  /** Submit updated admin info */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate password confirmation if changing password
     if (showPasswordFields && password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
 
-    // Require old password if changing password
     if (showPasswordFields && oldPassword.trim().length === 0) {
       toast.error("Please enter your current password");
       return;
@@ -85,6 +84,8 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
         }
       );
       toast.success("Profile updated successfully");
+
+      if (onSave) onSave(); // ✅ Call onSave if provided
       onClose();
     } catch (err) {
       toast.error("Failed to update profile");
@@ -95,13 +96,9 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
 
   return (
     <Dialog open={true} onClose={onClose} className="relative z-50">
-      {/* Overlay */}
       <div className="fixed inset-0 bg-black/25" aria-hidden="true" />
-
-      {/* Modal panel */}
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-          {/* Header */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">Edit Admin</h2>
             <button
@@ -113,9 +110,7 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
             </button>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Full Name */}
             <div>
               <label className="block text-sm font-medium mb-1">Full Name</label>
               <input
@@ -127,7 +122,6 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
               />
             </div>
 
-            {/* Profile Picture Upload */}
             <div>
               <label className="block text-sm font-medium mb-1">Profile Picture</label>
               <input
@@ -145,7 +139,6 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
               )}
             </div>
 
-            {/* Change Password Toggle */}
             {!hidePassword && !showPasswordFields && (
               <button
                 type="button"
@@ -156,7 +149,6 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
               </button>
             )}
 
-            {/* Password Fields */}
             {!hidePassword && showPasswordFields && (
               <>
                 <div>
@@ -204,7 +196,6 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, hidePassword = false 
               </>
             )}
 
-            {/* Submit Button */}
             <div className="flex justify-end">
               <button
                 type="submit"

@@ -2,13 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import axiosClient from "@/lib/axiosClient";
+import toast from "react-hot-toast";
 
-/**
- * ConfirmPasswordPage component
- * Handles confirmation and setting of a new password
- */
 export default function ConfirmPasswordPage() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
@@ -16,35 +12,34 @@ export default function ConfirmPasswordPage() {
 
   const router = useRouter();
 
-  // States for password inputs and loading/status flags
   const [password, setPassword] = useState(passwordParam);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isAlreadySet, setIsAlreadySet] = useState(false);
+  const [statusChecked, setStatusChecked] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Check if password is already set on mount
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:8080/api/auth/check-password-status?email=${email}`
+        const res = await axiosClient.get(
+          `/api/auth/check-password-status?email=${email}`
         );
-        if (res.data === "SET") setIsAlreadySet(true);
+        if (res.data === "SET") {
+          setIsAlreadySet(true);
+        }
       } catch (err) {
-        toast.error("Something went wrong while verifying status.");
+        console.error("Status check error", err);
+      } finally {
+        setStatusChecked(true);
       }
     };
 
     if (email) checkStatus();
   }, [email]);
 
-  /**
-   * Handles form submission to set the password
-   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validate password match
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -52,13 +47,11 @@ export default function ConfirmPasswordPage() {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:8080/api/auth/set-password", {
+      await axiosClient.post("/api/auth/set-password", {
         email,
         password,
       });
       toast.success("Password set successfully!");
-
-      // Redirect to admin page after delay
       setTimeout(() => router.push("/admin"), 2000);
     } catch (err) {
       toast.error("Failed to set password");
@@ -67,12 +60,14 @@ export default function ConfirmPasswordPage() {
     }
   };
 
-  // Handle invalid or missing email param
   if (!email) {
     return <p className="text-center mt-20">Invalid or missing email link.</p>;
   }
 
-  // Show message if password is already set
+  if (!statusChecked) {
+    return null;
+  }
+
   if (isAlreadySet) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -91,10 +86,6 @@ export default function ConfirmPasswordPage() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
-      {/* Toast notification container */}
-      <Toaster position="top-right" />
-
-      {/* Password confirmation form container */}
       <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-xl">
         <h1 className="text-3xl font-bold mb-6 text-[#000]">
           Confirm Your Password

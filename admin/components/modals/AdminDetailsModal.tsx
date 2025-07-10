@@ -36,19 +36,10 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
   admin,
   isSuperAdmin,
 }) => {
-  // State for controlling the password reset confirmation dialog visibility
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-
-  // Whether the modal is in edit mode (allows editing details)
   const [isEditing, setIsEditing] = useState(false);
+  const [updatedAdmin, setUpdatedAdmin] = useState<Admin>(admin);
 
-  // Local copy of admin data for editing before saving
-  const [updatedAdmin, setUpdatedAdmin] = useState(admin);
-
-  /**
-   * Handles sending a reset password request to backend
-   * @param superAdminPassword - password of super admin to authorize reset
-   */
   const handleResetPassword = async (superAdminPassword: string) => {
     setIsPasswordDialogOpen(false);
     try {
@@ -73,9 +64,6 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
     }
   };
 
-  /**
-   * Saves edited admin details to backend
-   */
   const handleSaveChanges = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -84,7 +72,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
         {
           name: updatedAdmin.name,
           status: updatedAdmin.status,
-          allowedModules: updatedAdmin.categories,
+          allowedModules: updatedAdmin.categories || [],
         },
         {
           headers: {
@@ -99,27 +87,25 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
     }
   };
 
-  /**
-   * Toggles the category permission in the updated admin's allowed modules
-   * @param category - category to toggle
-   */
+  // ✅ SAFE: Prevent crash when categories is undefined
   const handleCategoryChange = (category: string) => {
-    const updatedCategories = updatedAdmin.categories.includes(category)
-      ? updatedAdmin.categories.filter((c) => c !== category)
-      : [...updatedAdmin.categories, category];
+    if (!updatedAdmin) return;
+
+    const currentCategories = updatedAdmin.categories || [];
+
+    const updatedCategories = currentCategories.includes(category)
+      ? currentCategories.filter((c) => c !== category)
+      : [...currentCategories, category];
 
     setUpdatedAdmin({ ...updatedAdmin, categories: updatedCategories });
   };
 
   return (
     <>
-      {/* Modal dialog for admin details */}
       <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-        {/* Overlay background */}
         <div className="fixed inset-0 bg-black/25" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="w-full max-w-2xl rounded-2xl bg-white shadow-xl p-6">
-            {/* Close button */}
             <div className="flex justify-end">
               <button
                 onClick={onClose}
@@ -129,7 +115,6 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
               </button>
             </div>
 
-            {/* Admin header info: photo, name, email, ID */}
             <div className="flex items-center gap-4">
               <Image
                 src={admin.photo}
@@ -139,7 +124,6 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
                 className="w-16 h-16 rounded-full object-cover"
               />
               <div>
-                {/* Editable name input or static display */}
                 {isEditing ? (
                   <input
                     className="text-xl font-semibold border-b border-gray-300"
@@ -158,7 +142,6 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
               </div>
             </div>
 
-            {/* Admin details: Role, Status, Last Login, Categories */}
             <div className="grid grid-cols-2 gap-4 mt-6 text-sm">
               <div>
                 <p className="text-gray-500">Role</p>
@@ -166,13 +149,15 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
               </div>
               <div>
                 <p className="text-gray-500">Status</p>
-                {/* Editable status select or static display */}
                 {isEditing ? (
                   <select
                     className="w-full border rounded p-1"
                     value={updatedAdmin.status}
                     onChange={(e) =>
-                      setUpdatedAdmin({ ...updatedAdmin, status: e.target.value })
+                      setUpdatedAdmin({
+                        ...updatedAdmin,
+                        status: e.target.value,
+                      })
                     }
                   >
                     <option value="Active">Active</option>
@@ -201,14 +186,15 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
 
               <div>
                 <p className="text-gray-500">Categories</p>
-                {/* Editable categories checkboxes or static display */}
                 {isEditing ? (
                   <div className="grid grid-cols-2 gap-2">
                     {CATEGORY_OPTIONS.map((cat) => (
                       <label key={cat} className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          checked={updatedAdmin.categories.includes(cat)}
+                          checked={
+                            updatedAdmin.categories?.includes(cat) ?? false
+                          }
                           onChange={() => handleCategoryChange(cat)}
                         />
                         <span>{cat}</span>
@@ -217,7 +203,7 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {updatedAdmin.categories.map((cat, index) => (
+                    {(updatedAdmin.categories || []).map((cat, index) => (
                       <span
                         key={index}
                         className="px-2 py-1 rounded-full bg-[#F0F0F0] text-xs text-gray-600"
@@ -230,12 +216,13 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
               </div>
             </div>
 
-            {/* Footer buttons (Edit / Save and Reset Password) visible only for super admins */}
             {isSuperAdmin && (
               <div className="mt-6 flex justify-between items-center">
                 <button
                   className="text-sm text-[#5A31F5] hover:underline font-medium"
-                  onClick={() => (isEditing ? handleSaveChanges() : setIsEditing(true))}
+                  onClick={() =>
+                    isEditing ? handleSaveChanges() : setIsEditing(true)
+                  }
                 >
                   {isEditing ? "Save Changes" : "Edit Details"}
                 </button>
@@ -251,7 +238,6 @@ const AdminDetailsModal: React.FC<AdminDetailsModalProps> = ({
         </div>
       </Dialog>
 
-      {/* Confirm Password Dialog for resetting password */}
       <ConfirmPasswordDialog
         isOpen={isPasswordDialogOpen}
         onClose={() => setIsPasswordDialogOpen(false)}

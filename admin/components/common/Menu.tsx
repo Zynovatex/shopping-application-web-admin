@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useUserContext } from "@/context/UserContext";
 
-// Menu configuration with permissions and roles
 const menuItems = [
   {
     title: "MENU",
@@ -20,35 +19,35 @@ const menuItems = [
         label: "Seller Management",
         href: "/list/sellers",
         visible: ["ROLE_ADMIN", "ROLE_SUPER_ADMIN"],
-        permissionKey: "SELLER",
+        permissionKey: "Seller Mgmt",
       },
       {
         icon: "/student.png",
         label: "Product Management",
         href: "/list/product",
         visible: ["ROLE_ADMIN", "ROLE_SUPER_ADMIN"],
-        permissionKey: "PRODUCT",
+        permissionKey: "Product Mgmt",
       },
       {
         icon: "/parent.png",
         label: "Order & Delivery",
         href: "/list/order&delivery",
         visible: ["ROLE_ADMIN", "ROLE_SUPER_ADMIN"],
-        permissionKey: "ORDERS",
+        permissionKey: "Order & Delivery",
       },
       {
         icon: "/subject.png",
         label: "Customer Management",
         href: "/list/customers",
         visible: ["ROLE_ADMIN", "ROLE_SUPER_ADMIN"],
-        permissionKey: "CUSTOMER",
+        permissionKey: "Customer Mgmt",
       },
       {
         icon: "/class.png",
         label: "Analytics",
         href: "/list/analitics",
         visible: ["ROLE_ADMIN", "ROLE_SUPER_ADMIN"],
-        permissionKey: "ANALYTICS",
+        permissionKey: "Analytics",
       },
       {
         icon: "/lesson.png",
@@ -66,34 +65,26 @@ const menuItems = [
   },
 ];
 
-/**
- * Menu component
- * Renders the navigation menu based on user role and permissions
- */
 const Menu = () => {
   const { role, permissions } = useUserContext();
 
-  return (
+  console.log("User Role:", role);
+  console.log("Permissions from context:", permissions);
+
+  return ( 
     <div className="mt-4 text-sm">
       {menuItems.map((section) => (
         <div className="flex flex-col gap-2 mx-4" key={section.title}>
-          {/* Section title visible on large screens */}
           <span className="hidden lg:block text-gray-400 font-light my-4">
             {section.title}
           </span>
-
-          {/* Render each menu item if allowed */}
           {section.items.map((item) => {
-            // Check if user role is allowed to see this item
             const roleAllowed = item.visible.includes(role);
-
-            // Super Admin bypasses permission key check
             const permissionAllowed =
               role === "ROLE_SUPER_ADMIN" ||
               !item.permissionKey ||
               permissions.includes(item.permissionKey);
 
-            // Render link if both role and permission allow
             if (roleAllowed && permissionAllowed) {
               return (
                 <Link

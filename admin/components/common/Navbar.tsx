@@ -4,71 +4,27 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import axiosClient from "@/lib/axiosClient";
-import { User, Settings, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import Notification from "./NotificationIcon";
 import NotificationPanel from "../panels/NotificationPanel";
-import { subDays, isAfter } from "date-fns";
-
-type NotificationSource = "seller" | "buyer" | "system";
-
-interface NotificationItem {
-  id: number;
-  message: string;
-  createdAt: Date;
-  source: NotificationSource;
-}
-
-const allNotifications: NotificationItem[] = [
-  {
-    id: 1,
-    message: "New shop registration pending approval.",
-    createdAt: new Date(),
-    source: "seller",
-  },
-  {
-    id: 2,
-    message: "A customer submitted a refund request.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 30),
-    source: "buyer",
-  },
-  {
-    id: 3,
-    message: "Platform maintenance scheduled at midnight.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3),
-    source: "system",
-  },
-  {
-    id: 4,
-    message: "Seller updated their product pricing.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12),
-    source: "seller",
-  },
-  {
-    id: 5,
-    message: "New buyer account created.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24),
-    source: "buyer",
-  },
-  {
-    id: 6,
-    message: "Security policy updated by system admin.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48),
-    source: "system",
-  },
-];
+import { useNotification } from "@/context/NotificationContext";
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [adminInfo, setAdminInfo] = useState({ name: "", role: "" });
+  const [hasMounted, setHasMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const sampleNotifications = allNotifications.filter((n) =>
-    isAfter(n.createdAt, subDays(new Date(), 2))
-  );
+  const { notifications, unreadCount, markAllAsRead } = useNotification();
 
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  // Close dropdowns if clicked outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -85,6 +41,7 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Fetch admin info once
   useEffect(() => {
     const fetchAdminInfo = async () => {
       try {
@@ -101,6 +58,13 @@ const Navbar = () => {
     };
     fetchAdminInfo();
   }, []);
+
+  // ✅ Mark notifications as read only when opening panel and there are unread items
+  useEffect(() => {
+    if (showNotifications && unreadCount > 0) {
+      markAllAsRead();
+    }
+  }, [showNotifications]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -122,7 +86,7 @@ const Navbar = () => {
 
       {/* Right Section */}
       <div className="flex items-center gap-6 justify-end w-full">
-        {/* ✅ Message Icon with navigation */}
+        {/* Messages */}
         <div
           className="bg-white rounded-full w-7 h-7 flex justify-center items-center cursor-pointer hover:bg-gray-100 transition duration-150"
           role="button"
@@ -132,25 +96,26 @@ const Navbar = () => {
           <Image src="/message.png" alt="Messages" width={20} height={20} />
         </div>
 
-        {/* Notification Icon */}
+        {/* Notifications */}
         <div ref={notificationRef} className="relative">
-          <Notification
-            iconSrc="/announcement.png"
-            count={sampleNotifications.length}
-            alt="Notifications"
-            onClick={() => setShowNotifications((prev) => !prev)}
-          />
-          {showNotifications && (
-            <NotificationPanel
-              notifications={sampleNotifications}
-              onClose={() => setShowNotifications(false)}
+          {hasMounted && (
+            <Notification
+              iconSrc="/announcement.png"
+              count={unreadCount}
+              alt="Notifications"
+              onClick={() => setShowNotifications((prev) => !prev)}
             />
+          )}
+          {showNotifications && (
+            <NotificationPanel onClose={() => setShowNotifications(false)} />
           )}
         </div>
 
         {/* Admin Info */}
         <div className="flex flex-col p-1">
-          <span className="text-sm leading-3 font-medium">{adminInfo.name || "-"}</span>
+          <span className="text-sm leading-3 font-medium">
+            {adminInfo.name || "-"}
+          </span>
           <span className="text-[10px] text-gray-500 text-right">
             {adminInfo.role === "ROLE_SUPER_ADMIN"
               ? "Super Admin"

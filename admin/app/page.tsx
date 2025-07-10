@@ -35,9 +35,12 @@ function Login() {
         password,
       });
 
-      const { token, allowedModules } = response.data;
+      const { token, allowedModules, id } = response.data;
+
+      // ✅ Save all needed info
       localStorage.setItem("token", token);
       localStorage.setItem("allowedModules", JSON.stringify(allowedModules));
+      localStorage.setItem("adminId", String(id)); // ✅ Save adminId for WebSocket use
 
       router.push("/admin");
     } catch (err: any) {

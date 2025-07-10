@@ -151,17 +151,18 @@ export default function AMallAdmins() {
       <td className="hidden md:table-cell text-sm">{item.email}</td>
       <td className="hidden md:table-cell text-sm">{item.role}</td>
       <td className="hidden md:table-cell text-sm">
-        <div className="flex flex-wrap gap-1">
-          {item.categories.map((cat, index) => (
-            <span
-              key={index}
-              className="px-2 py-1 rounded-full bg-[#F0F0F0] text-xs text-gray-600"
-            >
-              {cat}
-            </span>
-          ))}
-        </div>
-      </td>
+  <div className="flex flex-wrap gap-1">
+    {(item.categories || []).map((cat, index) => (
+      <span
+        key={index}
+        className="px-2 py-1 rounded-full bg-[#F0F0F0] text-xs text-gray-600"
+      >
+        {cat}
+      </span>
+    ))}
+  </div>
+</td>
+
       <td className="hidden md:table-cell text-sm">
         <span
           className={`px-2 py-1 rounded-full text-xs font-semibold ${

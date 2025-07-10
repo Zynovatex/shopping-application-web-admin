@@ -164,7 +164,7 @@ export default function AMadminLogs() {
   const renderRow = (item: AdminLog) => (
     <tr
       key={item.id}
-      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF] cursor-pointer"
+      className="border-b border-gray-200 text-sm hover:bg-[green] cursor-pointer"
       onClick={() => handleRowClick(item)}
     >
       <td className="p-4">
