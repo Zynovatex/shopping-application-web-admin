@@ -43,13 +43,19 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     const socketConnection = connectSocket((msg) => {
-      if (!msg || !msg.message || !msg.createdAt) return;
+      console.log("📥 Raw WebSocket message received:", msg); // ✅ Debug log
+
+      // Validate minimal payload
+      if (!msg || !msg.message) {
+        console.warn("⛔ Received malformed notification:", msg);
+        return;
+      }
 
       const newNotification: NotificationItem = {
         id: Date.now(),
         message: msg.message,
         source: msg.source || 'system',
-        createdAt: new Date(msg.createdAt),
+        createdAt: new Date(), // ✅ Always use current time to prevent failures
         isRead: false,
       };
 
@@ -109,4 +115,3 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     </NotificationContext.Provider>
   );
 };
- 

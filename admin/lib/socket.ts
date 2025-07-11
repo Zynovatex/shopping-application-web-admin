@@ -14,12 +14,21 @@ const connectSocket = (onMessage: (msg: any) => void): SocketConnection => {
   }
 
   let adminId: string | null = null;
+  let exp: number | null = null;
 
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     adminId = payload?.adminId;
+    exp = payload?.exp; // ⏱️ JWT expiration timestamp (in seconds)
   } catch (err) {
     console.error("⛔ Failed to parse token payload:", err);
+    return null;
+  }
+
+  // ✅ Check for expiration
+  const currentTime = Math.floor(Date.now() / 1000); // in seconds
+  if (!exp || currentTime >= exp) {
+    console.warn("⛔ Token expired, skipping WebSocket connection");
     return null;
   }
 
@@ -40,12 +49,17 @@ const connectSocket = (onMessage: (msg: any) => void): SocketConnection => {
       }
     },
     onConnect: () => {
-      console.log(`✅ Connected to WebSocket: subscribing to /admin/${adminId}`);
-      client.subscribe(`/admin/${adminId}`, (message) => {
+      console.log("✅ STOMP WebSocket connected");
+
+      // 🔥 FIXED: Correct topic subscription (Spring auto-adds /user/)
+      const topic = `/user/${adminId}/admin`; // ✅ correct Spring STOMP topic
+      console.log(`📡 Subscribing to topic: ${topic}`);
+
+      client.subscribe(topic, (message) => {
         if (message.body) {
           try {
             const parsed = JSON.parse(message.body);
-            console.log("🔔 Notification received:", parsed);
+            console.log("📥 Raw WebSocket message received:", parsed);
             onMessage(parsed);
           } catch (err) {
             console.error("⛔ Failed to parse message:", err);
