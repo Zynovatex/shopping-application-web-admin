@@ -5,25 +5,23 @@ import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 import axiosClient from "@/lib/axiosClient";
 import toast from "react-hot-toast";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase";
+import { v4 as uuidv4 } from "uuid";
 
-/** Admin type */
 interface Admin {
   id: number;
   name: string;
   photo?: string;
 }
 
-/** Props for EditAdminModal */
 interface Props {
   admin: Admin;
   onClose: () => void;
   hidePassword?: boolean;
-  onSave?: () => void; // ✅ New prop added
+  onSave?: () => void;
 }
 
-/**
- * EditAdminModal component
- */
 const EditAdminModal: React.FC<Props> = ({
   admin,
   onClose,
@@ -32,6 +30,7 @@ const EditAdminModal: React.FC<Props> = ({
 }) => {
   const [name, setName] = useState(admin.name);
   const [photo, setPhoto] = useState(admin.photo || "");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
@@ -42,8 +41,9 @@ const EditAdminModal: React.FC<Props> = ({
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const fakeUrl = URL.createObjectURL(file);
-    setPhoto(fakeUrl);
+    setUploadFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setPhoto(previewUrl);
   };
 
   const handlePasswordChange = (val: string) => {
@@ -68,12 +68,20 @@ const EditAdminModal: React.FC<Props> = ({
 
     setLoading(true);
     try {
+      let photoUrl = photo;
+
+      if (uploadFile) {
+        const fileRef = ref(storage, `admin-profile/${uuidv4()}-${uploadFile.name}`);
+        await uploadBytes(fileRef, uploadFile);
+        photoUrl = await getDownloadURL(fileRef);
+      }
+
       const token = localStorage.getItem("token");
       await axiosClient.put(
         `/api/admin/admins/${admin.id}`,
         {
           name,
-          photo,
+          photo: photoUrl,
           oldPassword: showPasswordFields ? oldPassword : undefined,
           password: showPasswordFields ? password : undefined,
         },
@@ -85,7 +93,7 @@ const EditAdminModal: React.FC<Props> = ({
       );
       toast.success("Profile updated successfully");
 
-      if (onSave) onSave(); // ✅ Call onSave if provided
+      if (onSave) onSave();
       onClose();
     } catch (err) {
       toast.error("Failed to update profile");

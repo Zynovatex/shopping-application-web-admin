@@ -7,7 +7,7 @@ import TableSearch from "@/components/ui/TableSearch";
 import Image from "next/image";
 import Pagination from "@/components/ui/Pagination";
 import Table from "@/components/common/Table";
-import Link from "next/link";
+import ShopDetailsModal from "@/components/modals/ShopDetailsModal";
 import { allShopData } from "@/lib/data";
 
 type AllShops = {
@@ -91,9 +91,10 @@ export default function SellerPage() {
 function AllSellers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedShop, setSelectedShop] = useState<AllShops | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const itemsPerPage = 15;
 
-  // Filter shops by searchTerm (name or category)
   const filteredData = allShopData.filter(
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -114,7 +115,11 @@ function AllSellers() {
   const renderRow = (item: AllShops) => (
     <tr
       key={item.id}
-      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]"
+      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF] cursor-pointer"
+      onClick={() => {
+        setSelectedShop(item);
+        setIsModalOpen(true);
+      }}
     >
       <td className="flex items-center gap-4 p-4">
         <Image
@@ -133,12 +138,16 @@ function AllSellers() {
       <td className="hidden md:table-cell text-sm">{item.district}</td>
       <td className="hidden md:table-cell text-sm">{item.area}</td>
       <td className="hidden md:table-cell text-sm">{item.type}</td>
-      <td>
-        <Link href={`/list/sellers/${item.id}`}>
-          <button className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7B5AF7]">
-            <Image src="/view.png" alt="view" width={16} height={16} />
-          </button>
-        </Link>
+      <td onClick={(e) => e.stopPropagation()}>
+        <button
+          className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7B5AF7]"
+          onClick={() => {
+            setSelectedShop(item);
+            setIsModalOpen(true);
+          }}
+        >
+          <Image src="/view.png" alt="view" width={16} height={16} />
+        </button>
       </td>
     </tr>
   );
@@ -163,6 +172,14 @@ function AllSellers() {
       <Table<AllShops> columns={columns} data={currentData} renderRow={renderRow} />
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+
+      {selectedShop && (
+        <ShopDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          shop={selectedShop}
+        />
+      )}
     </div>
   );
 }
@@ -174,7 +191,6 @@ function PendingApprovals() {
 
   const pendingData = allShopData.filter((shop) => !shop.verified);
 
-  // Filter pending by search term (name or category)
   const filteredData = pendingData.filter(
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -193,10 +209,7 @@ function PendingApprovals() {
   };
 
   const renderRow2 = (item: AllShops) => (
-    <tr
-      key={item.id}
-      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]"
-    >
+    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4">
         <Image
           src={item.photo}

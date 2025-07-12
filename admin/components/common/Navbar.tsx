@@ -12,7 +12,7 @@ import { useNotification } from "@/context/NotificationContext";
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [adminInfo, setAdminInfo] = useState({ name: "", role: "" });
+  const [adminInfo, setAdminInfo] = useState({ name: "", role: "", photo: "" });
   const [hasMounted, setHasMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,6 @@ const Navbar = () => {
     setHasMounted(true);
   }, []);
 
-  // Close dropdowns if clicked outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -41,7 +40,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch admin info once
   useEffect(() => {
     const fetchAdminInfo = async () => {
       try {
@@ -59,7 +57,6 @@ const Navbar = () => {
     fetchAdminInfo();
   }, []);
 
-  // ✅ Mark notifications as read only when opening panel and there are unread items
   useEffect(() => {
     if (showNotifications && unreadCount > 0) {
       markAllAsRead();
@@ -69,6 +66,12 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.push("/");
+  };
+
+  const getAvatarSrc = () => {
+    return adminInfo.photo?.startsWith("http")
+      ? adminInfo.photo
+      : "/avatar.png";
   };
 
   return (
@@ -128,7 +131,7 @@ const Navbar = () => {
         {/* Avatar Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <Image
-            src="/avatar.png"
+            src={getAvatarSrc()}
             alt="avatar"
             width={36}
             height={36}

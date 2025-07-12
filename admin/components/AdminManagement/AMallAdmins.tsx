@@ -64,7 +64,7 @@ export default function AMallAdmins() {
 
   const isSuperAdmin = true;
 
-  /** Fetch admin data from backend or mock */
+  /** Fetch admin data from backend */
   useEffect(() => {
     const fetchAdmins = async () => {
       try {
@@ -134,7 +134,14 @@ export default function AMallAdmins() {
 
   /** Render each admin row */
   const renderRow = (item: Admin) => (
-    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF] cursor-pointer"
+      onClick={() => {
+        setSelectedAdmin(item);
+        setIsModalOpen(true);
+      }}
+    >
       <td className="flex items-center gap-4 p-4">
         <Image
           src={item.photo}
@@ -148,20 +155,23 @@ export default function AMallAdmins() {
           <h3 className="font-semibold text-sm">{item.name}</h3>
         </div>
       </td>
+
       <td className="hidden md:table-cell text-sm">{item.email}</td>
+
       <td className="hidden md:table-cell text-sm">{item.role}</td>
+
       <td className="hidden md:table-cell text-sm">
-  <div className="flex flex-wrap gap-1">
-    {(item.categories || []).map((cat, index) => (
-      <span
-        key={index}
-        className="px-2 py-1 rounded-full bg-[#F0F0F0] text-xs text-gray-600"
-      >
-        {cat}
-      </span>
-    ))}
-  </div>
-</td>
+        <div className="flex flex-wrap gap-1">
+          {(item.categories || []).map((cat, index) => (
+            <span
+              key={index}
+              className="px-2 py-1 rounded-full bg-[#F0F0F0] text-xs text-gray-600"
+            >
+              {cat}
+            </span>
+          ))}
+        </div>
+      </td>
 
       <td className="hidden md:table-cell text-sm">
         <span
@@ -176,8 +186,10 @@ export default function AMallAdmins() {
           {item.status}
         </span>
       </td>
+
       <td className="hidden md:table-cell text-sm">{item.lastLogin}</td>
-      <td>
+
+      <td onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-2">
           <button
             className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7B5AF7]"
