@@ -8,8 +8,10 @@ type SocketConnection = {
 
 const connectSocket = (onMessage: (msg: any) => void): SocketConnection => {
   const token = localStorage.getItem("token");
-  if (!token) {
-    console.warn("⛔ No token found, skipping WebSocket connection");
+
+  // ✅ Check if token exists and is well-formed
+  if (!token || token.split(".").length !== 3) {
+    console.warn("⛔ Invalid or missing token, skipping WebSocket connection:", token);
     return null;
   }
 
@@ -51,7 +53,6 @@ const connectSocket = (onMessage: (msg: any) => void): SocketConnection => {
     onConnect: () => {
       console.log("✅ STOMP WebSocket connected");
 
-      // 🔥 FIXED: Correct topic subscription (Spring auto-adds /user/)
       const topic = `/user/${adminId}/admin`; // ✅ correct Spring STOMP topic
       console.log(`📡 Subscribing to topic: ${topic}`);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import SellerOverview from "@/components/Sellers/SellerOverview";
 import TableSearch from "@/components/ui/TableSearch";
@@ -9,6 +9,20 @@ import Pagination from "@/components/ui/Pagination";
 import Table from "@/components/common/Table";
 import ShopDetailsModal from "@/components/modals/ShopDetailsModal";
 import { allShopData } from "@/lib/data";
+import axios from "axios";
+
+// -------------------- Interfaces --------------------
+
+interface Shop {
+  id: number;
+  shopName: string;
+  category: string;
+  address: string;
+  district: string;
+  area: string;
+  shopType: string;
+  shopImages: string[];
+}
 
 type AllShops = {
   id: number;
@@ -29,15 +43,7 @@ type Column = {
   className?: string;
 };
 
-const columns: Column[] = [
-  { header: "Info", accessor: "info" },
-  { header: "Category", accessor: "category", className: "hidden md:table-cell" },
-  { header: "Address", accessor: "address", className: "hidden md:table-cell" },
-  { header: "District", accessor: "district", className: "hidden md:table-cell" },
-  { header: "Area", accessor: "area", className: "hidden md:table-cell" },
-  { header: "Type", accessor: "type", className: "hidden md:table-cell" },
-  { header: "Actions", accessor: "actions" },
-];
+// -------------------- Page --------------------
 
 export default function SellerPage() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -88,14 +94,57 @@ export default function SellerPage() {
   );
 }
 
+// -------------------- All Shops --------------------
+
 function AllSellers() {
+  const [shops, setShops] = useState<AllShops[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedShop, setSelectedShop] = useState<AllShops | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const itemsPerPage = 15;
 
-  const filteredData = allShopData.filter(
+  const fetchAllShops = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:8080/api/admin/shops", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const mappedShops: AllShops[] = response.data.map((shop: any) => ({
+        shopId: `SH-${shop.id}`,
+        name: shop.shopName,
+        category: shop.category,
+        address: shop.address,
+        district: shop.district,
+        area: shop.area,
+        type: shop.shopType,
+        verified: shop.approved,
+        photo: shop.shopImages?.[0] || "/shop-default.png",
+        id: shop.id,
+      }));
+
+      setShops(mappedShops);
+    } catch (error) {
+      console.error("❌ Failed to fetch shops:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllShops();
+  }, []);
+
+  const columns: Column[] = [
+    { header: "Info", accessor: "info" },
+    { header: "Category", accessor: "category", className: "hidden md:table-cell" },
+    { header: "Address", accessor: "address", className: "hidden md:table-cell" },
+    { header: "District", accessor: "district", className: "hidden md:table-cell" },
+    { header: "Area", accessor: "area", className: "hidden md:table-cell" },
+    { header: "Type", accessor: "type", className: "hidden md:table-cell" },
+    { header: "Actions", accessor: "actions" },
+  ];
+
+  const filteredData = shops.filter(
     (shop) =>
       shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shop.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -170,69 +219,111 @@ function AllSellers() {
       </div>
 
       <Table<AllShops> columns={columns} data={currentData} renderRow={renderRow} />
-
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       {selectedShop && (
         <ShopDetailsModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          shop={selectedShop}
+          shop={{
+            shopId: selectedShop.shopId,
+            name: selectedShop.name,
+            address: selectedShop.address,
+            category: selectedShop.category,
+            district: selectedShop.district,
+            area: selectedShop.area,
+            photo: selectedShop.photo,
+            type: selectedShop.type,
+            verified: selectedShop.verified,
+            id: selectedShop.id,
+          }}
         />
       )}
     </div>
   );
 }
 
+
+// -------------------- Pending Approvals --------------------
+
 function PendingApprovals() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [shops, setShops] = useState<Shop[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const itemsPerPage = 15;
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const pendingData = allShopData.filter((shop) => !shop.verified);
+  const columns = [
+    { header: "Info", accessor: "info" },
+    { header: "Category", accessor: "category", className: "hidden md:table-cell" },
+    { header: "Address", accessor: "address", className: "hidden md:table-cell" },
+    { header: "District", accessor: "district", className: "hidden md:table-cell" },
+    { header: "Area", accessor: "area", className: "hidden md:table-cell" },
+    { header: "Type", accessor: "shopType", className: "hidden md:table-cell" },
+    { header: "Actions", accessor: "actions" },
+  ];
 
-  const filteredData = pendingData.filter(
+  const fetchPendingShops = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:8080/api/admin/shops/pending", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setShops(response.data);
+    } catch (error) {
+      console.error("❌ Failed to fetch shops:", error);
+    }
+  };
+
+  const handleApproval = async (shopId: number, approve: boolean) => {
+    try {
+      const token = localStorage.getItem("token");
+      const url = `http://localhost:8080/api/admin/shop/${shopId}/approval?approve=${approve}`;
+      await axios.put(url, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setShops((prev) => prev.filter((shop) => shop.id !== shopId));
+    } catch (error) {
+      console.error("❌ Approval failed:", error);
+    }
+  };
+
+  const filteredShops = shops.filter(
     (shop) =>
-      shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.shopName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shop.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const currentData = filteredData.slice(
+  const totalPages = Math.ceil(filteredShops.length / itemsPerPage);
+  const currentShops = filteredShops.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-    setCurrentPage(1);
-  };
-
-  const renderRow2 = (item: AllShops) => (
-    <tr key={item.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
+  const renderRow = (shop: Shop) => (
+    <tr key={shop.id} className="border-b border-gray-200 text-sm hover:bg-[#F8F6FF]">
       <td className="flex items-center gap-4 p-4">
         <Image
-          src={item.photo}
-          alt={item.name}
+          src={shop.shopImages?.[0] || "/shop-default.png"}
+          alt="Shop"
           width={40}
           height={40}
           className="w-10 h-10 rounded-full object-cover"
         />
         <div>
-          <h3 className="font-semibold text-sm">{item.name}</h3>
+          <h3 className="font-semibold text-sm">{shop.shopName}</h3>
         </div>
       </td>
-      <td className="hidden md:table-cell text-sm">{item.category}</td>
-      <td className="hidden md:table-cell text-sm">{item.address}</td>
-      <td className="hidden md:table-cell text-sm">{item.district}</td>
-      <td className="hidden md:table-cell text-sm">{item.area}</td>
-      <td className="hidden md:table-cell text-sm">{item.type}</td>
+      <td className="hidden md:table-cell text-sm">{shop.category}</td>
+      <td className="hidden md:table-cell text-sm">{shop.address}</td>
+      <td className="hidden md:table-cell text-sm">{shop.district}</td>
+      <td className="hidden md:table-cell text-sm">{shop.area}</td>
+      <td className="hidden md:table-cell text-sm">{shop.shopType}</td>
       <td>
         <div className="flex items-center gap-2">
-          <button className="focus:outline-none cursor-pointer">
+          <button onClick={() => handleApproval(shop.id, true)}>
             <Image src="/accept-icon-image.png" alt="Accept" width={20} height={20} />
           </button>
-          <button className="focus:outline-none cursor-pointer">
+          <button onClick={() => handleApproval(shop.id, false)}>
             <Image src="/reject-icon-image.png" alt="Reject" width={20} height={20} />
           </button>
         </div>
@@ -240,12 +331,16 @@ function PendingApprovals() {
     </tr>
   );
 
+  useEffect(() => {
+    fetchPendingShops();
+  }, []);
+
   return (
     <div className="bg-white p-4 flex-1 m-2 mt-0 rounded-xl border border-gray-200 shadow-md hover:shadow-lg">
       <div className="flex items-center justify-between pb-2">
         <h1 className="hidden md:block text-lg font-semibold">Pending Approvals</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch onSearch={handleSearch} />
+          <TableSearch onSearch={setSearchTerm} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#5A31F5]">
               <Image src="/filter.png" alt="filter" width={14} height={14} />
@@ -257,8 +352,7 @@ function PendingApprovals() {
         </div>
       </div>
 
-      <Table<AllShops> columns={columns} data={currentData} renderRow={renderRow2} />
-
+      <Table<Shop> columns={columns} data={currentShops} renderRow={renderRow} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );

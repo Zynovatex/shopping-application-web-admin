@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
 import "./globals.css";
+import axiosClient from "@/lib/axiosClient"; // ✅ add this line
+
 
 /**
  * Login component
@@ -30,7 +32,7 @@ function Login() {
     e.preventDefault();
     setError("");
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
+      const response = await axiosClient.post("/api/auth/login", {
         email,
         password,
       });
